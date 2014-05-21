@@ -152,7 +152,7 @@ all: $(EXES) $O/lmbench
 opt: $(OPT_EXES)
 asm: $(ASMS)
 $(ASMS):
-	$(CC) -S $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o $@ `basename $@ .s`.c
+	$(CROSS_COMPILE)$(CC) -S $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -o $@ `basename $@ .s`.c
 
 Wall:
 	@env CFLAGS="-g -O -Wall" MAKE="$(MAKE)" MAKEFLAGS="$(MAKEFLAGS)" CC="${CC}" OS="${OS}" ../scripts/build all opt
@@ -214,7 +214,7 @@ $O/lmbench : ../scripts/lmbench version.h
 
 $O/lmbench.a: $(LIBOBJS)
 	/bin/rm -f $O/lmbench.a
-	$(AR) $(ARCREATE) $O/lmbench.a $(LIBOBJS)
+	$(CROSS_COMPILE)$(AR) $(ARCREATE) $O/lmbench.a $(LIBOBJS)
 	-ranlib $O/lmbench.a
 
 $O/lib_timing.o : lib_timing.c $(INCS)
