@@ -278,6 +278,7 @@ dodir(char *name, int sock)
 	FILE	*p;
 	char	buf[1024];
 	char	path[1024];
+	int rc;
 
 	if (dflg) printf("dodir(%s)\n", name);
 	sprintf(buf, "cd %s && ls -1a", name);
@@ -286,16 +287,28 @@ dodir(char *name, int sock)
 	sprintf(buf, "\
 <HTML><HEAD>\n<TITLE>Index of /%s</TITLE></HEAD><BODY><H1>Index of /%s</H1>\n",
 	    name, name);
-	write(sock, buf, strlen(buf));
+	rc = write(sock, buf, strlen(buf));
+	if (rc)
+		DIE_PERROR("write failed");
 	while (fgets(buf, sizeof(buf), p)) {
 		buf[strlen(buf) - 1] = 0;
 		sprintf(path, "/%s/%s", name, buf);
 		if (dflg) printf("\t%s\n", path);
-		write(sock, "<A HREF=\"", 9);
-		write(sock, path, strlen(path));
-		write(sock, "\">", 2);
-		write(sock, buf, strlen(buf));
-		write(sock, "</A><BR>\n", 9);
+		rc = write(sock, "<A HREF=\"", 9);
+		if (rc < 0)
+			DIE_PERROR("write failed");
+		rc = write(sock, path, strlen(path));
+		if (rc < 0)
+			DIE_PERROR("write failed");
+		rc = write(sock, "\">", 2);
+		if (rc < 0)
+			DIE_PERROR("write failed");
+		rc = write(sock, buf, strlen(buf));
+		if (rc < 0)
+			DIE_PERROR("write failed");
+		rc = write(sock, "</A><BR>\n", 9);
+		if (rc < 0)
+			DIE_PERROR("write failed");
 	}
 	pclose(p);
 }
@@ -371,6 +384,7 @@ logit(int sock, char *name, int size)
 	char			buf[1024 + 16];	/* maxpathlen + others */
 	struct	sockaddr_in 	sin;
 	socklen_t		len = sizeof(sin);
+	int rc;
 
 	if (getpeername(sock, (struct sockaddr*)&sin, &len) == -1) {
 		perror("getpeername");
@@ -379,7 +393,9 @@ logit(int sock, char *name, int size)
 	len = sprintf(buf, "%u %u %s %u\n",
 	    *((unsigned int*)&sin.sin_addr), (unsigned int)time(0), name, size);
 	if (nbytes + len >= sizeof(logbuf)) {
-		write(logfile, logbuf, nbytes);
+		rc = write(logfile, logbuf, nbytes);
+		if (rc < 0)
+			DIE_PERROR("write failed");
 		nbytes = 0;
 	}
 	memcpy(&logbuf[nbytes], buf, len);
@@ -388,9 +404,9 @@ logit(int sock, char *name, int size)
 
 void die()
 {
-	if (nbytes) {
-		write(logfile, logbuf, nbytes);
-		nbytes = 0;
-	}
+	int rc;
+
+	if (nbytes)
+		rc = write(logfile, logbuf, nbytes);
 	exit(1);
 }

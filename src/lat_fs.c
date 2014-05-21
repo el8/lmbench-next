@@ -108,12 +108,14 @@ void
 mkfile(char *name, size_t size)
 {
 	size_t	chunk;
-	int	fd = creat(name, 0666);
+	int rc, fd = creat(name, 0666);
 	char	buf[128*1024];		/* XXX - track sizes */
 
 	while (size > 0) {
 		chunk = ((size > (128*1024)) ? (128*1024) : size);
-		write(fd, buf, chunk);
+		rc = write(fd, buf, chunk);
+		if (rc < 0)
+			DIE_PERROR("write failed");
 		size -= chunk;
 	}
 	close(fd);

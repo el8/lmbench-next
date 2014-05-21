@@ -91,7 +91,7 @@ void
 init(iter_t iterations, void* cookie)
 {
 	state_t *state = (state_t *) cookie;
-	int	msize  = htonl(state->msize);
+	int rc, msize = htonl(state->msize);
 
 	if (iterations) return;
 
@@ -102,7 +102,9 @@ init(iter_t iterations, void* cookie)
 		exit(1);
 	}
 
-	write(state->sock, &msize, sizeof(int));
+	rc = write(state->sock, &msize, sizeof(int));
+	if (rc < 0)
+		DIE_PERROR("write failed");
 }
 
 void
@@ -120,11 +122,15 @@ void
 doclient(iter_t iterations, void* cookie)
 {
 	state_t *state = (state_t *) cookie;
-	int 	sock   = state->sock;
+	int rc, sock = state->sock;
 
 	while (iterations-- > 0) {
-		write(sock, state->buf, state->msize);
-		read(sock, state->buf, state->msize);
+		rc = write(sock, state->buf, state->msize);
+		if (rc < 0)
+			DIE_PERROR("write failed");
+		rc = read(sock, state->buf, state->msize);
+		if (rc < 0)
+			DIE_PERROR("read failed");
 	}
 }
 
@@ -156,7 +162,7 @@ server_main()
 void
 doserver(int sock)
 {
-	int	n;
+	int rc, n;
 
 	if (read(sock, &n, sizeof(int)) == sizeof(int)) {
 		int	msize = ntohl(n);
@@ -167,7 +173,9 @@ doserver(int sock)
 			exit(4);
 		}
 		for (n = 0; read(sock, buf, msize) > 0; n++) {
-			write(sock, buf, msize);
+			rc = write(sock, buf, msize);
+			if (rc < 0)
+				DIE_PERROR("write failed");
 		}
 		free(buf);
 	} else {

@@ -18,20 +18,22 @@ int	echo;
 int
 http(char *server, char *file, int prog)
 {
-	int     sock;
-	int     n;
-	int	b = 0;
+	int sock, n, rc, b = 0;
 
 	sock = tcp_connect(server, prog, SOCKOPT_REUSE);
 	sprintf(buf, "GET /%s HTTP/1.0\r\n\r\n\n", file);
 	if (debug) {
-		printf(buf);
+		printf("%s", buf);
 	}
-	write(sock, buf, strlen(buf));
+	rc = write(sock, buf, strlen(buf));
+	if (rc < 0)
+		DIE_PERROR("write failed");
 	while ((n = read(sock, buf, XFERSIZE)) > 0) {
 		b += n;
 		if (echo) {
-			write(1, buf, n);
+			rc = write(1, buf, n);
+			if (rc < 0)
+				DIE_PERROR("write failed");
 		}
 	}
 	close(sock);
@@ -44,10 +46,12 @@ http(char *server, char *file, int prog)
 void
 killhttp(char *server, int prog)
 {
-	int     sock;
+	int     sock, rc;
 
 	sock = tcp_connect(server, prog, SOCKOPT_REUSE);
-	write(sock, "EXIT", 4);
+	rc = write(sock, "EXIT", 4);
+	if (rc < 0)
+		DIE_PERROR("write failed");
 	close(sock);
 }
 

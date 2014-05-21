@@ -70,6 +70,7 @@ void
 initialize(iter_t iterations, void* cookie)
 {
 	struct _state* pState = (struct _state*)cookie;
+	int rc;
 
 	if (iterations) return;
 
@@ -92,7 +93,9 @@ initialize(iter_t iterations, void* cookie)
 	/* Child sits and ping-pongs packets back to parent */
 	signal(SIGTERM, exit);
 	while (read(pState->sv[0], pState->buf, pState->msize) == pState->msize) {
-		write(pState->sv[0], pState->buf, pState->msize);
+		rc = write(pState->sv[0], pState->buf, pState->msize);
+		if (rc < 0)
+			DIE_PERROR("write failed");
 	}
 	exit(0);
 }

@@ -95,6 +95,7 @@ initialize(iter_t iterations, void* cookie)
 {
 	char	buf[10000];
 	struct _state* state = (struct _state*)cookie;
+	int rc;
 
 	if (iterations) return;
 
@@ -116,8 +117,12 @@ initialize(iter_t iterations, void* cookie)
 	}
 	unlink(state->filename1);
 	unlink(state->filename2);
-	write(state->fd1, buf, sizeof(buf));
-	write(state->fd2, buf, sizeof(buf));
+	rc = write(state->fd1, buf, sizeof(buf));
+	if (rc < 0)
+		DIE_PERROR("write failed");
+	rc = write(state->fd2, buf, sizeof(buf));
+	if (rc < 0)
+		DIE_PERROR("write failed");
 	lock.l_type = F_WRLCK;
 	lock.l_whence = 0;
 	lock.l_start = 0;

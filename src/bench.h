@@ -11,7 +11,6 @@
 #include <signal.h>
 #include <errno.h>
 #include <stdarg.h>
-#include <strings.h>
 #include <time.h>
 #include <sys/types.h>
 #include <sys/mman.h>
@@ -319,5 +318,13 @@ extern int sched_pin(int cpu);
 #define RPC_EXIT ((u_long)2)
 extern char *rpc_xact_1();
 extern char *client_rpc_xact_1();
+
+#define COMP "lmbench"
+
+#define DIE_PERROR(...)                                                 \
+        do {                                                            \
+                perror(COMP ":" __VA_ARGS__);				\
+                exit(1);						\
+        } while (0)
 
 #endif /* _BENCH_H */

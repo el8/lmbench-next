@@ -96,7 +96,7 @@ main(int ac, char **av)
 void
 server(void* cookie)
 {
-	int pid;
+	int pid, rc;
 	state_t* state = (state_t*)cookie;
 
 	pid = getpid();
@@ -129,7 +129,9 @@ server(void* cookie)
 		/* child server process */
 		while (pid == getppid()) {
 			int newsock = tcp_accept(state->sock, SOCKOPT_NONE);
-			read(newsock, &state->fid, 1);
+			rc = read(newsock, &state->fid, 1);
+			if (rc < 0)
+				DIE_PERROR("read failed");
 			close(newsock);
 		}
 		exit(0);

@@ -34,7 +34,7 @@ int main(int ac, char **av)
 	int warmup = 0;
 	int repetitions = -1;
 	char	*usage = "-s\n OR [-P <parallelism>] [-W <warmup>] [-N <repetitions>]\n OR -S\n";
-	int	c;
+	int rc, c;
 
 	/* Start the server "-s" or Shut down the server "-S" */
 	if (ac == 2) {
@@ -46,7 +46,9 @@ int main(int ac, char **av)
 		}
 		if (!strcmp(av[1], "-S")) {
 			int sock = unix_connect(CONNAME);
-			write(sock, "0", 1);
+			rc = write(sock, "0", 1);
+			if (rc < 0)
+				DIE_PERROR("write failed");
 			close(sock);
 			exit(0);
 		}
@@ -83,7 +85,7 @@ int main(int ac, char **av)
 
 void server_main(void)
 {
-	int     newsock, sock;
+	int newsock, sock, rc;
 	char	c;
 
 	GO_AWAY;
@@ -91,7 +93,9 @@ void server_main(void)
 	for (;;) {
 		newsock = unix_accept(sock);
 		c = 0;
-		read(newsock, &c, 1);
+		rc = read(newsock, &c, 1);
+		if (rc < 0)
+			DIE_PERROR("read failed");
 		if (c && c == '0') {
 			unix_done(sock, CONNAME);
 			exit(0);

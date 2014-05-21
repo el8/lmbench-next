@@ -334,8 +334,7 @@ benchmp_parent(	int response,
 		int enough
 		)
 {
-	int		i, j;
-	int		bytes_read;
+	int		i, j, rc, bytes_read;
 	result_t*	results = NULL;
 	result_t*	merged_results = NULL;
 	char*		signals = NULL;
@@ -398,7 +397,9 @@ benchmp_parent(	int response,
 	}
 
 	/* send 'start' signal */
-	write(start_signal, signals, parallel * sizeof(char));
+	rc = write(start_signal, signals, parallel * sizeof(char));
+	if (rc < 0)
+		DIE_PERROR("write failed");
 
 	/* Collect 'done' signals */
 	for (i = 0; i < parallel * sizeof(char); i += bytes_read) {
@@ -443,7 +444,7 @@ benchmp_parent(	int response,
 		FD_ZERO(&fds_error);
 
 		/* tell one child to report its results */
-		write(result_signal, buf, sizeof(char));
+		rc = write(result_signal, buf, sizeof(char));
 
 		for (; n > 0; n -= bytes_read, buf += bytes_read) {
 			bytes_read = 0;
@@ -484,7 +485,9 @@ benchmp_parent(	int response,
 	signal(SIGCHLD, SIG_DFL);
 	
 	/* send 'exit' signals */
-	write(exit_signal, results, parallel * sizeof(char));
+	rc = write(exit_signal, results, parallel * sizeof(char));
+	if (rc < 0)
+		DIE_PERROR("write failed");
 
 	/* Compute median time; iterations is constant! */
 	set_results(merged_results);
@@ -651,6 +654,7 @@ benchmp_interval(void* _state)
 	double		result;
 	fd_set		fds;
 	struct timeval	timeout;
+	int rc;
 	benchmp_child_state* state = (benchmp_child_state*)_state;
 
 	iterations = (state->state == timing_interval ? state->iterations : state->iterations_batch);
@@ -690,13 +694,17 @@ benchmp_interval(void* _state)
 		       NULL, &timeout);
 		if (FD_ISSET(state->start_signal, &fds)) {
 			state->state = timing_interval;
-			read(state->start_signal, &c, sizeof(char));
+			rc = read(state->start_signal, &c, sizeof(char));
+			if (rc < 0)
+				DIE_PERROR("read failed");
 			iterations = state->iterations;
 		}
 		if (state->need_warmup) {
 			state->need_warmup = 0;
 			/* send 'ready' */
-			write(state->response, &c, sizeof(char));
+			rc = write(state->response, &c, sizeof(char));
+			if (rc < 0)
+				DIE_PERROR("write failed");
 		}
 		break;
 	case timing_interval:
@@ -726,7 +734,9 @@ benchmp_interval(void* _state)
 		state->iterations = iterations;
 		if (state->state == cooldown) {
 			/* send 'done' */
-			write(state->response, (void*)&c, sizeof(char));
+			rc = write(state->response, (void*)&c, sizeof(char));
+			if (rc < 0)
+				DIE_PERROR("write failed");
 			iterations = state->iterations_batch;
 		}
 		break;
@@ -741,8 +751,12 @@ benchmp_interval(void* _state)
 			 * the parent to tell us to send our results back.
 			 * From this point on, we will do no more "work".
 			 */
-			read(state->result_signal, (void*)&c, sizeof(char));
-			write(state->response, (void*)get_results(), state->r_size);
+			rc = read(state->result_signal, (void*)&c, sizeof(char));
+			if (rc < 0)
+				DIE_PERROR("read failed");
+			rc = write(state->response, (void*)get_results(), state->r_size);
+			if (rc < 0)
+				DIE_PERROR("write failed");
 			if (state->cleanup) {
 				if (benchmp_sigchld_handler == SIG_DFL)
 					signal(SIGCHLD, SIG_DFL);
@@ -750,7 +764,8 @@ benchmp_interval(void* _state)
 			}
 
 			/* Now wait for signal to exit */
-			read(state->exit_signal, (void*)&c, sizeof(char));
+			rc = read(state->exit_signal, (void*)&c, sizeof(char));
+				DIE_PERROR("read failed");
 			exit(0);
 		}
 	};

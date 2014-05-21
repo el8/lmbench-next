@@ -41,7 +41,7 @@ main(int ac, char **av)
 	int	shutdown = 0;
 	state_t state;
 	char	*usage = "-s\n OR [-m <message size>] [-M <bytes to move>] [-P <parallelism>] [-W <warmup>] [-N <repetitions>] server\n OR -S serverhost\n";
-	int	c;
+	int	c, rc;
 	
 	state.msize = 0;
 	state.move = 0;
@@ -59,7 +59,9 @@ main(int ac, char **av)
 		{
 			int	conn;
 			conn = tcp_connect(optarg, TCP_DATA, SOCKOPT_NONE);
-			write(conn, "0", 1);
+			rc = write(conn, "0", 1);
+			if (rc < 0)
+				DIE_PERROR("write failed");
 			exit(0);
 		}
 		case 'm':
@@ -139,10 +141,8 @@ initialize(iter_t iterations, void *cookie)
 		exit(1);
 	}
 	sprintf(buf, "%lu", (unsigned long)state->msize);
-	if (write(state->sock, buf, strlen(buf) + 1) != strlen(buf) + 1) {
-		perror("control write");
-		exit(1);
-	}
+	if (write(state->sock, buf, strlen(buf) + 1) != strlen(buf) + 1)
+		DIE_PERROR("control write");
 }
 
 void 

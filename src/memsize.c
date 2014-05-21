@@ -120,9 +120,7 @@ touchRange(char *p, size_t range, ssize_t stride)
 int
 test_malloc(size_t size)
 {
-	int	fid[2];
-	int	result;
-	int	status;
+	int fid[2], result, status, rc;
 	void*	p;
 
 	if (pipe(fid) < 0) {
@@ -135,7 +133,9 @@ test_malloc(size_t size)
 		close(fid[0]);
 		p = malloc(size);
 		result = (p ? 1 : 0);
-		write(fid[1], &result, sizeof(int));
+		rc = write(fid[1], &result, sizeof(int));
+		if (rc < 0)
+			DIE_PERROR("write failed");
 		close(fid[1]);
 		if (p) free(p);
 		exit(0);
