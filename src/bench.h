@@ -1,49 +1,35 @@
 #ifndef _BENCH_H
 #define _BENCH_H
 
-#ifdef WIN32
-#include <windows.h>
-typedef unsigned char bool_t;
-#endif
+#include <assert.h>
+#include <ctype.h>
+#include <stdio.h>
+#include <math.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <signal.h>
+#include <errno.h>
+#include <stdarg.h>
+#include <strings.h>
+#include <time.h>
+#include <sys/types.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
+#include <sys/time.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <sys/resource.h>
 
-#include	<assert.h>
-#include        <ctype.h>
-#include        <stdio.h>
-#include	<math.h>
-#ifndef WIN32
-#include        <unistd.h>
-#endif
-#include        <stdlib.h>
-#include        <fcntl.h>
-#include        <signal.h>
-#include        <errno.h>
-#ifndef WIN32
-#include        <strings.h>
-#endif
-#include        <sys/types.h>
-#ifndef WIN32
-#include        <sys/mman.h>
-#endif
-#include        <sys/stat.h>
-#ifndef WIN32
-#include        <sys/wait.h>
-#include	<time.h>
-#include        <sys/time.h>
-#include        <sys/socket.h>
-#include        <sys/un.h>
-#include        <sys/resource.h>
 #define PORTMAP
 #include	<rpc/rpc.h>
-#endif
-#ifdef HAVE_pmap_clnt_h
-#include	<rpc/pmap_clnt.h>
-#endif
 #include	<rpc/types.h>
+
 #ifdef HAVE_pmap_clnt_h
 #include	<rpc/pmap_clnt.h>
 #endif
 
-#include 	<stdarg.h>
 #ifndef HAVE_uint
 typedef unsigned int uint;
 #endif
@@ -156,12 +142,6 @@ typedef int64 off64_t;
 #define drand48()	((double)random() / (double)RAND_MAX)
 #endif /* HAVE_RAND */
 #endif /* HAVE_DRAND48 */
-
-#ifdef WIN32
-#include <process.h>
-#define getpid _getpid
-int	gettimeofday(struct timeval *tv, struct timezone *tz);
-#endif
 
 #define	SMALLEST_LINE	32		/* smallest cache line size */
 #define	TIME_OPEN2CLOSE
