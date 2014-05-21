@@ -34,8 +34,7 @@ int
 main(int ac, char **av)
 {
 	state_t state;
-	int	repetitions = -1;
-	int 	c;
+	int rc, c, repetitions = -1;
 	char	buf[256];
 	char	*usage = "-s\n OR [-S] [-N <repetitions>] server\n";
 
@@ -51,7 +50,9 @@ main(int ac, char **av)
 			int sock = tcp_connect(av[optind],
 					       TCP_CONNECT,
 					       SOCKOPT_NONE);
-			write(sock, "0", 1);
+			rc = write(sock, "0", 1);
+			if (rc < 0)
+				DIE_PERROR("write failed");
 			close(sock);
 			exit(0);
 		}
