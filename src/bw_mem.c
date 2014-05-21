@@ -160,7 +160,7 @@ init_loop(iter_t iterations, void *cookie)
 		perror("malloc");
 		exit(1);
 	}
-	bzero((void*)state->buf, state->nbytes);
+	memset((void*)state->buf, 0, state->nbytes);
 
 	if (state->need_buf2 == 1) {
 		state->buf2_orig = state->buf2 = (TYPE *)valloc(state->nbytes + 2048);
@@ -415,7 +415,7 @@ loop_bzero(iter_t iterations, void *cookie)
 	register size_t  N = state->N;
 
 	while (iterations-- > 0) {
-		bzero(p, N);
+		memset(p, 0, N);
 	}
 }
 
@@ -428,7 +428,7 @@ loop_bcopy(iter_t iterations, void *cookie)
 	register size_t  N = state->N;
 
 	while (iterations-- > 0) {
-		bcopy(p,dst,N);
+		memcpy(dst, p, N);
 	}
 }
 

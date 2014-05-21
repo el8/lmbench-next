@@ -12,7 +12,6 @@
  */
 #include "bench.h"
 
-
 struct cache_results {
 	size_t	len;
 	size_t	maxlen;
@@ -139,7 +138,7 @@ main(int ac, char **av)
 		perror("malloc");
 		exit(1);
 	}
-	bzero(levels, n * sizeof(int));
+	memset(levels, 0, n * sizeof(int));
 
 	for (start = 0, prev = 0, level = 0, prev_lat = -1.0; 
 	     (i = find_cache(start, n, prev_lat, r)) >= 0; 
@@ -588,7 +587,7 @@ fixup_chunk(size_t i, size_t chunk, size_t npages, size_t* pages,
 		perror("malloc");
 		exit(4);
 	}
-	bcopy(pages, saved_pages, sizeof(int) * ntotalpages);
+	memcpy(saved_pages, pages, sizeof(int) * ntotalpages);
 
 	/* move everything to the end of the page list */
 	if (i + chunk < npages) {
@@ -677,7 +676,7 @@ fixup_chunk(size_t i, size_t chunk, size_t npages, size_t* pages,
 		if (new_baseline >= 0.999 * *baseline) {
 			/* no benefit to these changes; back them out */
 			swapped = 0;
-			bcopy(saved_pages, pages, sizeof(int) * ntotalpages);
+			memcpy(pages, saved_pages, sizeof(int) * ntotalpages);
 		} else {
 			/* we sped up, so keep these changes */
 			*baseline = new_baseline;

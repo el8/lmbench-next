@@ -147,7 +147,7 @@ initialize_overhead(iter_t iterations, void* cookie)
 	}
 
 	if (pState->data)
-		bzero(pState->data, pState->process_size);
+		memset(pState->data, 0, pState->process_size);
 
 	procs = create_pipes(pState->p, pState->procs);
 	if (procs < pState->procs) {
@@ -209,7 +209,7 @@ initialize(iter_t iterations, void* cookie)
 	pState->pids = (pid_t*)malloc(pState->procs * sizeof(pid_t));
 	if (pState->pids == NULL)
 		exit(1);
-	bzero((void*)pState->pids, pState->procs * sizeof(pid_t));
+	memset((void*)pState->pids, 0, pState->procs * sizeof(pid_t));
 	procs = create_daemons(pState->p, pState->pids, 
 			       pState->procs, pState->process_size);
 	if (procs < pState->procs) {
@@ -278,7 +278,7 @@ doit(int rd, int wr, int process_size)
 			perror("malloc");
 			exit(3);
 		}
-		bzero(data, process_size);
+		memset(data, 0, process_size);
 	}
 	for ( ;; ) {
 		if (read(rd, &msg, sizeof(msg)) != sizeof(msg)) {

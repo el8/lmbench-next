@@ -50,7 +50,7 @@ zone(char *disk, int oflag, int bsize)
 		perror("valloc");
 		exit(1);
 	}
-	bzero(buf, bsize);
+	memset(buf, 0, bsize);
 #ifdef	linux
 	flushdisk(fd);
 #endif
@@ -152,7 +152,7 @@ seek(char *disk, int oflag)
 		perror("valloc");
 		exit(1);
 	}
-	bzero(buf, IOSIZE);
+	memset(buf, 0, IOSIZE);
 
 	/*
 	 * We flip back and forth, in strides of 1MB (typically).

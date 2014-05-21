@@ -218,7 +218,7 @@ source(int data)
 	/*
 	 * read the message size
 	 */
-	bzero(scratch, 100);
+	memset(scratch, 0, 100);
 	if (read(data, scratch, 100) <= 0) {
 		perror("control nbytes");
 		exit(7);
@@ -240,7 +240,7 @@ source(int data)
 		perror("valloc");
 		exit(1);
 	}
-	bzero(buf, m);
+	memset(buf, 0, m);
 
 	/*
 	 * Keep sending messages until the connection is closed

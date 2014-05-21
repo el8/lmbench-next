@@ -107,7 +107,7 @@ main(int ac, char **av)
 		perror("valloc");
 		exit(1);
 	}
-	bzero(buf, XFERSIZE);
+	memset(buf, 0, XFERSIZE);
 	while (fgets(file, sizeof(file), stdin)) {
 		chop(file);
 		start(0);

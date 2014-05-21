@@ -462,8 +462,10 @@ tlb_initialize(iter_t iterations, void* cookie)
 	state->lines = lines;
 	state->pages = (size_t*)pages;
 	state->addr = (char*)addr;
-	if (addr) bzero(addr, npages * sizeof(char**));
-	if (pages) bzero(pages, npages * sizeof(char**));
+	if (addr)
+		memset(addr, 0, npages * sizeof(char**));
+	if (pages)
+		memset(pages, 0, npages * sizeof(char**));
 
 	if (addr == NULL || pages == NULL || lines == NULL) {
 		return;
@@ -530,7 +532,7 @@ words_initialize(size_t max, int scale)
 
 	if (!words) return NULL;
 
-	bzero(words, max * sizeof(size_t));
+	memset(words, 0, max * sizeof(size_t));
 	for (i = max>>1, nbits = 0; i != 0; i >>= 1, nbits++)
 		;
 	for (i = 0; i < max; ++i) {

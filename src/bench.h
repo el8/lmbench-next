@@ -124,11 +124,6 @@ typedef int64 off64_t;
 #define	XFERSIZE	(64*1024)	/* all bandwidth I/O should use this */
 #endif
 
-#if defined(SYS5) || defined(WIN32)
-#define	bzero(b, len)	memset(b, 0, len)
-#define	bcopy(s, d, l)	memcpy(d, s, l)
-#define	rindex(s, c)	strrchr(s, c)
-#endif
 #define	gettime		usecs_spent
 #define	streq		!strcmp
 #define	ulong		unsigned long

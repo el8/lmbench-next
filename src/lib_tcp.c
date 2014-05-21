@@ -28,7 +28,7 @@ tcp_server(int prog, int rdwr)
 		exit(1);
 	}
 	sock_optimize(sock, rdwr);
-	bzero((void*)&s, sizeof(s));
+	memset((void*)&s, 0, sizeof(s));
 	s.sin_family = AF_INET;
 	if (prog < 0) {
 		s.sin_port = htons(-prog);
@@ -78,7 +78,7 @@ tcp_accept(int sock, int rdwr)
 	socklen_t	namelen;
 
 	namelen = sizeof(s);
-	bzero((void*)&s, namelen);
+	memset((void*)&s, 0, namelen);
 
 retry:
 	if ((newsock = accept(sock, (struct sockaddr*)&s, &namelen)) < 0) {
@@ -129,7 +129,7 @@ tcp_connect(char *host, int prog, int rdwr)
 		}
 		do {
 			port++;
-			bzero((void*)&sin, sizeof(sin));
+			memset((void*)&sin, 0, sizeof(sin));
 			sin.sin_family = AF_INET;
 			sin.sin_port = htons(port);
 		} while (bind(sock, (struct sockaddr*)&sin, sizeof(sin)) == -1);
@@ -138,7 +138,7 @@ tcp_connect(char *host, int prog, int rdwr)
 	else {
 		struct sockaddr_in sin;
 
-		bzero((void*)&sin, sizeof(sin));
+		memset((void*)&sin, 0, sizeof(sin));
 		sin.sin_family = AF_INET;
 		if (bind(sock, (struct sockaddr*)&sin, sizeof(sin)) < 0) {
 			perror("bind");
@@ -157,9 +157,9 @@ tcp_connect(char *host, int prog, int rdwr)
 			perror(host);
 			exit(2);
 		}
-		bzero((void *) &s, sizeof(s));
+		memset((void *)&s, 0, sizeof(s));
 		s.sin_family = AF_INET;
-		bcopy((void*)h->h_addr, (void *)&s.sin_addr, h->h_length);
+		memcpy((void *)&s.sin_addr, (void*)h->h_addr, h->h_length);
 		if (prog > 0) {
 			save_port = pmap_getport(&s, prog,
 			    (u_long)1, IPPROTO_TCP);

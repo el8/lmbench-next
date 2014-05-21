@@ -220,7 +220,7 @@ benchmp(benchmp_f initialize,
 	benchmp_sigchld_handler = signal(SIGCHLD, benchmp_sigchld);
 	pids = (pid_t*)malloc(parallel * sizeof(pid_t));
 	if (!pids) return;
-	bzero((void*)pids, parallel * sizeof(pid_t));
+	memset((void*)pids, 0, parallel * sizeof(pid_t));
 
 	for (i = 0; i < parallel; ++i) {
 		if (benchmp_sigterm_received)
@@ -879,7 +879,7 @@ get_n(void)
 void
 settime(uint64 usecs)
 {
-	bzero((void*)&start_tv, sizeof(start_tv));
+	memset((void*)&start_tv, 0, sizeof(start_tv));
 	stop_tv.tv_sec = usecs / 1000000;
 	stop_tv.tv_usec = usecs % 1000000;
 }

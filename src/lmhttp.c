@@ -382,7 +382,7 @@ logit(int sock, char *name, int size)
 		write(logfile, logbuf, nbytes);
 		nbytes = 0;
 	}
-	bcopy(buf, &logbuf[nbytes], len);
+	memcpy(&logbuf[nbytes], buf, len);
 	nbytes += len;
 }
 

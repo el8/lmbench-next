@@ -24,7 +24,7 @@ unix_server(char *path)
 		perror("socket");
 		exit(1);
 	}
-	bzero((void*)&s, sizeof(s));
+	memset((void*)&s, 0, sizeof(s));
 	s.sun_family = AF_UNIX;
 	strcpy(s.sun_path, path);
 	if (bind(sock, (struct sockaddr*)&s, sizeof(s)) < 0) {
@@ -60,7 +60,7 @@ unix_accept(int sock)
 	socklen_t	namelen;
 
 	namelen = sizeof(s);
-	bzero((void*)&s, namelen);
+	memset((void*)&s, 0, namelen);
 
 retry:
 	if ((newsock = accept(sock, (struct sockaddr*)&s, &namelen)) < 0) {
@@ -86,7 +86,7 @@ unix_connect(char *path)
 		perror("socket");
 		exit(1);
 	}
-	bzero((void*)&s, sizeof(s));
+	memset((void*)&s, 0, sizeof(s));
 	s.sun_family = AF_UNIX;
 	strcpy(s.sun_path, path);
 	if (connect(sock, (struct sockaddr*)&s, sizeof(s)) < 0) {

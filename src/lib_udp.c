@@ -25,7 +25,7 @@ udp_server(u_long prog, int rdwr)
 		exit(1);
 	}
 	sock_optimize(sock, rdwr);
-	bzero((void*)&s, sizeof(s));
+	memset((void*)&s, 0, sizeof(s));
 	s.sin_family = AF_INET;
 #ifdef	NO_PORTMAPPER
 	s.sin_port = htons(prog);
@@ -77,9 +77,9 @@ udp_connect(char *host, u_long prog, int rdwr)
 		perror(host);
 		exit(2);
 	}
-	bzero((void *) &sin, sizeof(sin));
+	memset((void *) &sin, 0, sizeof(sin));
 	sin.sin_family = AF_INET;
-	bcopy((void*)h->h_addr, (void *) &sin.sin_addr, h->h_length);
+	memcpy((void *) &sin.sin_addr, (void*)h->h_addr, h->h_length);
 #ifdef	NO_PORTMAPPER
 	sin.sin_port = htons(prog);
 #else

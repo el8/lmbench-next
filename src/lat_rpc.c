@@ -172,7 +172,7 @@ client_rpc_xact_1(char *argp, CLIENT *clnt)
 {
 	static char res;
 
-	bzero((void*)&res, sizeof(res));
+	memset((void*)&res, 0, sizeof(res));
 	if (clnt_call(clnt, RPC_XACT, (xdrproc_t)xdr_char,
 	    argp, (xdrproc_t)xdr_char, &res, TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
@@ -263,7 +263,7 @@ xact_prog_1(rqstp, transp)
 		svcerr_noproc(transp);
 		return;
 	}
-	bzero((char *)&argument, sizeof(argument));
+	memset((char *)&argument, 0, sizeof(argument));
 	if (!svc_getargs(transp, (xdrproc_t)xdr_argument, (char*)&argument)) {
 		svcerr_decode(transp);
 		return;

@@ -217,7 +217,7 @@ sched_pin(int cpu)
 	}
 	cpu %= ncpus;
 
-	bzero(mask, sz * sizeof(unsigned long));
+	memset(mask, 0, sz * sizeof(unsigned long));
 	for (i = 0, j = 0; i < sz * 8 * sizeof(unsigned long); ++i) {
 		int	word = i / (8 * sizeof(unsigned long));
 		int	bit = i % (8 * sizeof(unsigned long));

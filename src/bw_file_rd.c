@@ -175,7 +175,7 @@ main(int ac, char **av)
 		xfersize = XFERSIZE;
 	}
 	buf = (void *)valloc(XFERSIZE);
-	bzero(buf, XFERSIZE);
+	memset(buf, 0, XFERSIZE);
 
 	if (!strcmp("open2close", av[optind+1])) {
 		benchmp(initialize, time_with_open, cleanup,

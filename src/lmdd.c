@@ -285,7 +285,7 @@ main(int ac, char **av)
 			perror("VALLOC");
 			exit(1);
 		}
-		bzero((char *) bufs[i], Bsize);
+		memset((char *) bufs[i], 0, Bsize);
 #ifdef sgi
 		if (getarg("mpin=", ac, av) != -1) {
 			if (mpin((void *)bufs[i], (size_t)Bsize)) {
@@ -792,8 +792,8 @@ getfile(char *s, int ac, char **av)
 #ifdef F_FSSETXATTR
 				if (Realtime == 1) {
 					struct fsxattr fsxattr;
-				
-					bzero(&fsxattr,sizeof(struct fsxattr));
+
+					memset(&fsxattr, 0, sizeof(struct fsxattr));
 					fsxattr.fsx_xflags = 0x1;
 					if (fcntl(ret,F_FSSETXATTR,&fsxattr)){
 						printf("WARNING: Could not make %s a real time file\n",
