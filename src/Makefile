@@ -56,7 +56,7 @@ SAMPLES=lmbench/Results/aix/rs6000 lmbench/Results/hpux/snake \
 	lmbench/Results/irix/indigo2 lmbench/Results/linux/pentium \
 	lmbench/Results/osf1/alpha lmbench/Results/solaris/ss20* 
 
-COMPILE=$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS)
+COMPILE=$(CROSS_COMPILE)$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS)
 
 INCS =	bench.h lib_mem.h lib_tcp.h lib_udp.h stats.h timing.h
 
