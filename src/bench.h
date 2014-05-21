@@ -323,7 +323,7 @@ extern char *client_rpc_xact_1();
 
 #define DIE_PERROR(...)                                                 \
         do {                                                            \
-                perror(COMP ":" __VA_ARGS__);				\
+                perror(COMP ":" __FILE__ __VA_ARGS__);			\
                 exit(1);						\
         } while (0)
 
