@@ -104,9 +104,9 @@ print_mem(char* addr, size_t size, size_t line)
 	uint64	base, off;
 	size_t	pagesize = getpagesize();
 
-	base = (uint64)addr;
+	base = (uint64) ((unsigned long) addr);
 	for (p = addr; *(char**)p != addr; p = *(char**)p) {
-		off = (uint64)p - base;
+		off = (uint64) ((unsigned long) (p - base));
 		fprintf(stderr, "\t%lu\t%lu\t%lu\n", 
 			(unsigned long)(off / pagesize), 
 			(unsigned long)((off % pagesize) / line),
