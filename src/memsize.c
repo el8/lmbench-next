@@ -8,8 +8,6 @@
  * (1) the benchmark is unmodified, and
  * (2) the version in the sccsid below is included in the report.
  */
-char	*id = "$Id$\n";
-
 #include "bench.h"
 
 #define	CHK(x)	if ((x) == -1) { perror("x"); exit(1); }

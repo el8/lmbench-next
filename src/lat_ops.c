@@ -23,8 +23,6 @@
  * this is common in scientific codes that do these sorts of
  * operations.
  */
-char	*id = "$Id$\n";
-
 #include "bench.h"
 
 struct _state {

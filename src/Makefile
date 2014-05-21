@@ -1,5 +1,3 @@
-# $Id$
-
 # Make targets:
 #
 # lmbench	[default] builds the benchmark suite for the current os/arch

@@ -1,5 +1,3 @@
-$Id$
-
 Add standard deviation and other statistics calculations to "make stats"
 in results.  Alternatively, we might report min, 1Q, median, 3Q, max,
 as standard deviation for non-normal distributions isn't always sensible.

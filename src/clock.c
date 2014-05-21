@@ -5,9 +5,6 @@
  */
 #include "bench.h"
 
-char	*id = "$Id$";
-char	*revision = "$Revision$";
-
 main()
 {
 	uint64	enough;
@@ -19,6 +16,5 @@ main()
 	printf("TIMING_OVERHEAD=%f\n", t_overhead); fflush(stdout);
 	l_overhead = loop_overhead(enough, t_overhead);
 	printf("LOOP_OVERHEAD=%f\n", l_overhead);
-	printf("# version [%s]\n", revision);
 	exit(0);
 }

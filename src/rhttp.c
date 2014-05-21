@@ -24,8 +24,6 @@
  * (2) the version in the sccsid below is included in the report.
  * Support for this development by Silicon Graphics is gratefully acknowledged.
  */
-char	*id = "$Id$\n";
-
 #include "bench.h"
 
 int

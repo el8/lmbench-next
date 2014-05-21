@@ -1,4 +1,3 @@
-char	*id = "$Id: lmdd.c,v 1.23 1997/12/01 23:47:59 lm Exp $\n";
 /*
  * defaults:
  *	bs=8k

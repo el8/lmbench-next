@@ -9,8 +9,6 @@
  * (2) the version in the sccsid below is included in the report.
  * Support for this development by Hewlett-Packard is gratefully acknowledged.
  */
-char	*id = "$Id$\n";
-
 #include "bench.h"
 
 #ifdef HAVE_DRAND48

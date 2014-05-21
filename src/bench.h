@@ -1,6 +1,3 @@
-/*
- * $Id$
- */
 #ifndef _BENCH_H
 #define _BENCH_H
 

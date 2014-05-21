@@ -1,6 +1,4 @@
 # Makefile for top level of lmbench
-# $Id$
-
 # Possible things to $(MAKE):
 #
 # build		(default) go to the source directory and build the benchmark

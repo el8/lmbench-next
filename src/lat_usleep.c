@@ -27,8 +27,6 @@
  * (2) the version in the sccsid below is included in the report.
  * Support for this development by Sun Microsystems is gratefully acknowledged.
  */
-char           *id = "$Id$\n";
-
 #include "bench.h"
 #include <sched.h>
 

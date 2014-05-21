@@ -1,4 +1,3 @@
-char	*id = "$Id$\n";
 /*
  * Seek - calculate seeks as a function of distance.
  *
@@ -6,7 +5,6 @@ char	*id = "$Id$\n";
  *
  * Copyright (c) 1994,1995,1996 Larry McVoy.  All rights reserved.
  */
-
 #include	"bench.h"
 
 #define	STRIDE	1024*1024

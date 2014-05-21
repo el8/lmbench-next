@@ -1,6 +1,3 @@
-/*
- * $Id$
- */
 #ifndef _TIMING_H
 #define _TIMING_H
 

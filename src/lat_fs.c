@@ -1,11 +1,7 @@
 /*
  * Benchmark creates & deletes.
  */
-
-char	*id = "$Id$\n";
-
 #include "bench.h"
-
 
 struct _state {
 	char	*tmpdir;

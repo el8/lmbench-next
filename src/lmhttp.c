@@ -11,9 +11,8 @@
  * (2) the version in the sccsid below is included in the report.
  * Other authors: Steve Alexander, sca@sgi.com.
  */
-char	*id = "$Id$\n";
-
 #include "bench.h"
+
 #ifdef MAP_FILE
 #	define	MMAP_FLAGS	MAP_FILE|MAP_SHARED
 #else

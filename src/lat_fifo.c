@@ -8,8 +8,6 @@
  * (1) the benchmark is unmodified, and
  * (2) the version in the sccsid below is included in the report.
  */
-char	*id = "$Id$\n";
-
 #include "bench.h"
 
 #define	F1	"/tmp/lmbench_f1.%d"

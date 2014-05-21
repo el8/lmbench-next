@@ -12,9 +12,8 @@
  * (2) the version in the sccsid below is included in the report.
  * Support for this development by Sun Microsystems is gratefully acknowledged.
  */
-char	*id = "$Id: s.lat_mem_rd.c 1.13 98/06/30 16:13:49-07:00 lm@lm.bitmover.com $\n";
-
 #include "bench.h"
+
 #define STRIDE  (512/sizeof(char *))
 #define	LOWER	512
 void	loads(size_t len, size_t range, size_t stride, 

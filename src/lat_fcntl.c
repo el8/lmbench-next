@@ -1,5 +1,3 @@
-#include "bench.h"
-
 /*
  * lat_fcntl.c - file locking test
  *
@@ -9,8 +7,6 @@
  * (2) the version in the sccsid below is included in the report.
  * Support for this development by Sun Microsystems is gratefully acknowledged.
  */
-char	*id = "$Id: lat_pipe.c,v 1.8 1997/06/16 05:38:58 lm Exp $\n";
-
 #include "bench.h"
 
 struct	flock lock, unlock;
