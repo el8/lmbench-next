@@ -1,12 +1,8 @@
 #!/bin/sh
 
-if [ "X$OS" != "X" ] && echo "$OS" | grep '`' > /dev/null
+if [ "X$ARCH" = "X" ]
 then
-    OS=
-fi
-
-if [ "X$OS" = "X" ]
-then	OS=bloat-os
+    OS=bloat-os
     MACHINE=`uname -m | sed -e 's/ //g' | sed -e 's?/?-?g'`
     SYSTEM=`uname -s | sed -e 's/ //g' | sed -e 's?/?-?g'`
     OS="${MACHINE}-${SYSTEM}"
@@ -16,5 +12,7 @@ then	OS=bloat-os
     if [ -f ../../scripts/gnu-os ]
     then	OS=`../../scripts/gnu-os | sed s/unknown-//`
     fi
+else
+    OS=${ARCH}
 fi
 echo $OS
