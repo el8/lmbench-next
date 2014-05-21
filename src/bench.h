@@ -319,11 +319,12 @@ extern int sched_pin(int cpu);
 extern char *rpc_xact_1();
 extern char *client_rpc_xact_1();
 
-#define COMP "lmbench"
+#define COMP ""
 
 #define DIE_PERROR(...)                                                 \
         do {                                                            \
-                perror(COMP ":" __FILE__ __VA_ARGS__);			\
+		fprintf(stderr, "%s:%s", __FILE__, __LINE__);		\
+		perror(COMP ":" __VA_ARGS__);				\
                 exit(1);						\
         } while (0)
 
