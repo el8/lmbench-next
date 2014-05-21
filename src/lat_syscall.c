@@ -7,7 +7,7 @@
  * (2) the version in the sccsid below is included in the report.
  */
 #include "bench.h"
-#define	FNAME "/usr/include/sys/types.h"
+#define	FNAME "/bin/sh"
 
 struct _state {
 	int fd;

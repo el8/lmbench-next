@@ -13,6 +13,7 @@
 # shar		build a shippable shar archive
 
 SHELL=/bin/sh
+MAKE=make
 
 build: 
 	cd src && $(MAKE)

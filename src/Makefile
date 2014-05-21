@@ -33,7 +33,7 @@
 SHELL=/bin/sh
 
 CC=gcc
-MAKE=`../scripts/make`
+MAKE=make
 AR=ar
 ARCREATE=cr
 
@@ -46,10 +46,10 @@ OS=`../scripts/os`
 TARGET=`../scripts/target`
 BINDIR=../bin/$(OS)
 CONFIG=../bin/$(OS)/`../scripts/config`
-UTILS=../scripts/target ../scripts/os ../scripts/gnu-os ../scripts/compiler \
+UTILS=../scripts/target ../scripts/os ../scripts/gnu-os \
 	../scripts/info ../scripts/info-template ../scripts/version \
 	../scripts/config ../scripts/config-run ../scripts/results \
-	../scripts/lmbench ../scripts/make ../scripts/build
+	../scripts/lmbench ../scripts/build
 INSTALL=cp
 RESULTS=Results/$(OS)
 SAMPLES=lmbench/Results/aix/rs6000 lmbench/Results/hpux/snake \
