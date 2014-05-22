@@ -12,9 +12,9 @@ export PATH
 
 if [ -f $1 ]
 then	. $1
-	echo \[Using config in $1] 1>&2
+	echo "[Using config in $1]" 1>&2
 else
-	echo \[Using defaults] 1>&2
+	echo "[Using defaults]" 1>&2
 	ENOUGH=1000000
 	TIMING_O=0
 	LOOP_O=0
@@ -216,7 +216,7 @@ if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_PAGEFAULT = XYES ]; then
 fi
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_MMAP = XYES ]; then
 	echo "" 1>&2
-	echo "mappings 1>&2
+	echo mappings 1>&2
 	for i in $ALL
 	do	lat_mmap -P $SYNC_MAX $i $FILE
 	done
