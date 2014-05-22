@@ -101,19 +101,27 @@ echo \[VERSION: `uname -v`] 1>&2
 
 echo \[`date`] 1>&2
 echo \[`uptime`] 1>&2
-netstat -i | while read i
-do	echo \[net: "$i"] 1>&2
-	interface=`echo $i | awk '{print $1}'`
-	case $interface in
-	    *ame)	;;
-	    *ace)	;;
-	    *ernel)	;;
-	    *)		ifconfig $interface | while read i
-			do echo \[if: "$i"] 1>&2
-			done
-			;;
-	esac
-done
+
+# busybox might disable -i, just do a full ifconfig then
+netstat -i >& /dev/null
+if [ $? -ne 0 ]
+then
+	ifconfig -a 1>&2
+else	
+	netstat -i | while read i
+	do	echo \[net: "$i"] 1>&2
+		interface=`echo $i | awk '{print $1}'`
+		case $interface in
+		    *ame)	;;
+		    *ace)	;;
+		    *ernel)	;;
+		    *)		ifconfig $interface | while read i
+				do echo \[if: "$i"] 1>&2
+				done
+				;;
+		esac
+	done
+fi
 
 mount | while read i
 do	echo \[mount: "$i"] 1>&2
