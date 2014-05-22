@@ -65,7 +65,7 @@ SRCS =  bw_file_rd.c bw_mem.c bw_mmap_rd.c bw_pipe.c bw_tcp.c bw_udp.c	\
 	cache.c clock.c disk.c enough.c flushdisk.c getopt.c hello.c	\
 	lat_connect.c lat_ctx.c	lat_fcntl.c lat_fifo.c lat_fs.c 	\
 	lat_mem_rd.c lat_mmap.c lat_ops.c lat_pagefault.c lat_pipe.c 	\
-	lat_proc.c lat_rpc.c lat_select.c lat_sig.c lat_syscall.c	\
+	lat_proc.c lat_select.c lat_sig.c lat_syscall.c	\
 	lat_tcp.c lat_udp.c lat_unix.c lat_unix_connect.c lat_sem.c	\
 	lat_usleep.c lat_pmake.c  					\
 	lib_debug.c lib_mem.c lib_stats.c lib_tcp.c lib_timing.c 	\
@@ -80,7 +80,7 @@ ASMS =  $O/bw_file_rd.s $O/bw_mem.s $O/bw_mmap_rd.s $O/bw_pipe.s 	\
 	$O/disk.s $O/enough.s $O/flushdisk.s $O/getopt.s $O/hello.s	\
 	$O/lat_connect.s $O/lat_ctx.s lat_fcntl.s $O/lat_fifo.s		\
 	$O/lat_fs.s $O/lat_mem_rd.s $O/lat_mmap.s $O/lat_ops.s		\
-	$O/lat_pagefault.s $O/lat_pipe.s $O/lat_proc.s $O/lat_rpc.s	\
+	$O/lat_pagefault.s $O/lat_pipe.s $O/lat_proc.s			\
 	$O/lat_select.s $O/lat_sig.s $O/lat_syscall.s $O/lat_tcp.s	\
 	$O/lat_udp.s $O/lat_unix.s $O/lat_unix_connect.s $O/lat_sem.s	\
 	$O/lib_debug.s $O/lib_mem.s	\
@@ -93,7 +93,7 @@ ASMS =  $O/bw_file_rd.s $O/bw_mem.s $O/bw_mmap_rd.s $O/bw_pipe.s 	\
 	$O/lat_usleep.s $O/lat_cmd.s
 EXES =	$O/bw_file_rd $O/bw_mem $O/bw_mmap_rd $O/bw_pipe $O/bw_tcp 	\
 	$O/bw_unix $O/hello						\
-	$O/lat_select $O/lat_pipe $O/lat_rpc $O/lat_syscall $O/lat_tcp	\
+	$O/lat_select $O/lat_pipe $O/lat_syscall $O/lat_tcp		\
 	$O/lat_udp $O/lat_mmap $O/mhz $O/lat_proc $O/lat_pagefault	\
 	$O/lat_connect $O/lat_fs $O/lat_sig $O/lat_mem_rd $O/lat_ctx	\
 	$O/lat_sem 							\
@@ -358,10 +358,6 @@ $O/lat_fifo:  lat_fifo.c timing.h stats.h bench.h $O/lmbench.a
 $O/lat_proc.s:lat_proc.c timing.h stats.h bench.h
 $O/lat_proc:  lat_proc.c timing.h stats.h bench.h $O/lmbench.a
 	$(COMPILE) -o $O/lat_proc lat_proc.c $O/lmbench.a $(LDLIBS)
-
-$O/lat_rpc.s:lat_rpc.c timing.h stats.h bench.h
-$O/lat_rpc:  lat_rpc.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_rpc lat_rpc.c $O/lmbench.a $(LDLIBS)
 
 $O/lat_sig.s:lat_sig.c timing.h stats.h bench.h
 $O/lat_sig:  lat_sig.c timing.h stats.h bench.h $O/lmbench.a
