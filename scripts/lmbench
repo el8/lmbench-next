@@ -12,8 +12,9 @@ export PATH
 
 if [ -f $1 ]
 then	. $1
-	echo Using config in $1 >> ${OUTPUT}
-else	echo Using defaults >> ${OUTPUT}
+	echo \[Using config in $1] 1>&2
+else
+	echo \[Using defaults] 1>&2
 	ENOUGH=1000000
 	TIMING_O=0
 	LOOP_O=0
@@ -33,7 +34,7 @@ AVAILKB=`expr $MB \* 1024`
 # Create test file if needed
 if [ ! -f $FILE ]
 then
-	`dd if=/dev/zero of=$FILE bs=1M count=$MB`
+	`dd if=/dev/zero of=$FILE bs=1M count=$MB > /dev/null`
 fi
 
 # Figure out how big we can go for stuff that wants to use
@@ -149,7 +150,7 @@ then	/bin/rm -rf $SYNC
 	fi
 fi
 
-echo Latency measurements >> ${OUTPUT}
+echo Latency measurements 1>&2
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_SYSCALL = XYES ]; then
 	lat_syscall -P $SYNC_MAX null
 	lat_syscall -P $SYNC_MAX read
@@ -215,7 +216,7 @@ if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_PAGEFAULT = XYES ]; then
 fi
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_MMAP = XYES ]; then
 	echo "" 1>&2
-	echo \"mappings 1>&2
+	echo "mappings 1>&2
 	for i in $ALL
 	do	lat_mmap -P $SYNC_MAX $i $FILE
 	done
@@ -225,7 +226,7 @@ if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_FILE = XYES ]; then
 	if [ X$SLOWFS != XYES ]
 	then
 		echo Calculating file system latency >> ${OUTPUT}
-		echo '"File system latency' 1>&2
+		echo "File system latency" 1>&2
 		lat_fs $FSDIR
 		echo "" 1>&2
 	fi
@@ -286,13 +287,13 @@ fi
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_FILE = XYES ]; then
 	echo "" 1>&2
-	echo \"read bandwidth 1>&2
+	echo "read bandwidth 1>&2
 	for i in $ALL
 	do	bw_file_rd -P $SYNC_MAX $i io_only $FILE
 	done
 	echo "" 1>&2
 	
-	echo \"read open2close bandwidth 1>&2
+	echo "read open2close bandwidth 1>&2
 	for i in $ALL
 	do	bw_file_rd -P $SYNC_MAX $i open2close $FILE
 	done
@@ -301,13 +302,13 @@ fi
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_MMAP = XYES ]; then
 	echo "" 1>&2
-	echo \"Mmap read bandwidth 1>&2
+	echo "Mmap read bandwidth 1>&2
 	for i in $ALL
 	do	bw_mmap_rd -P $SYNC_MAX $i mmap_only $FILE
 	done
 	echo "" 1>&2
 
-	echo \"Mmap read open2close bandwidth 1>&2
+	echo "Mmap read open2close bandwidth 1>&2
 	for i in $ALL
 	do	bw_mmap_rd -P $SYNC_MAX $i open2close $FILE
 	done
@@ -318,19 +319,19 @@ fi
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_HARDWARE = XYES \
      -o X$BENCHMARK_BCOPY = XYES ]; then
 	echo "" 1>&2
-	echo \"libc bcopy unaligned 1>&2
+	echo "libc bcopy unaligned 1>&2
 	for i in $HALF; do bw_mem -P $SYNC_MAX $i bcopy; done; echo "" 1>&2
 
-	echo \"libc bcopy aligned 1>&2
+	echo "libc bcopy aligned 1>&2
 	for i in $HALF; do bw_mem -P $SYNC_MAX $i bcopy conflict; done; echo "" 1>&2
 
 	echo "Memory bzero bandwidth" 1>&2
 	for i in $ALL; do bw_mem -P $SYNC_MAX $i bzero; done; echo "" 1>&2
 
-	echo \"unrolled bcopy unaligned 1>&2
+	echo "unrolled bcopy unaligned 1>&2
 	for i in $HALF; do bw_mem -P $SYNC_MAX $i fcp; done; echo "" 1>&2
 
-	echo \"unrolled partial bcopy unaligned 1>&2
+	echo "unrolled partial bcopy unaligned 1>&2
 	for i in $HALF; do bw_mem -P $SYNC_MAX $i cp; done; echo "" 1>&2
 
 	echo "Memory read bandwidth" 1>&2

@@ -58,7 +58,7 @@ foreach $file (@ARGV) {
 				print OUT "%T Reread bandwidth for $tmp\n";
 			}
 		}
-		if ((!$all && !$mem) && /^"read bandwidth/) {
+		if ((!$all && !$mem) && /^read bandwidth/) {
 			print OUT "\"File reread\n";
 			while (<FD>) {
 				last if /^\s*$/;
@@ -67,7 +67,7 @@ foreach $file (@ARGV) {
 			print OUT "\n";
 			next;
 		}
-		if ((!$all && !$mem) && /^"read open2close bandwidth/) {
+		if ((!$all && !$mem) && /^read open2close bandwidth/) {
 			print OUT "\"File open2close reread\n";
 			while (<FD>) {
 				last if /^\s*$/;
@@ -76,7 +76,7 @@ foreach $file (@ARGV) {
 			print OUT "\n";
 			next;
 		}
-		if ((!$all && !$mem) && /^"Mmap read bandwidth/) {
+		if ((!$all && !$mem) && /^Mmap read bandwidth/) {
 			print OUT "\"File mmap reread\n";
 			while (<FD>) {
 				last if /^\s*$/;
@@ -85,7 +85,7 @@ foreach $file (@ARGV) {
 			print OUT "\n";
 			next;
 		}
-		if ((!$all && !$mem) && /^"Mmap read open2close bandwidth/) {
+		if ((!$all && !$mem) && /^Mmap read open2close bandwidth/) {
 			print OUT "\"File mmap open2close reread\n";
 			while (<FD>) {
 				last if /^\s*$/;
@@ -94,7 +94,7 @@ foreach $file (@ARGV) {
 			print OUT "\n";
 			next;
 		}
-		if ($all && /^"libc bcopy aligned/) {
+		if ($all && /^libc bcopy aligned/) {
 			print OUT "\"libc bcopy aligned\n";
 			while (<FD>) {
 				last if /^\s*$/;
@@ -103,7 +103,7 @@ foreach $file (@ARGV) {
 			print OUT "\n";
 			next;
 		}
-		if (/^"libc bcopy unaligned/) {
+		if (/^libc bcopy unaligned/) {
 			print OUT "\"libc bcopy unaligned\n";
 			while (<FD>) {
 				last if /^\s*$/;
@@ -112,7 +112,7 @@ foreach $file (@ARGV) {
 			print OUT "\n";
 			next;
 		}
-		if ($all && /^"unrolled bcopy aligned/) {
+		if ($all && /^unrolled bcopy aligned/) {
 			print OUT "\"libc bcopy unaligned\n";
 			while (<FD>) {
 				last if /^\s*$/;
@@ -121,7 +121,7 @@ foreach $file (@ARGV) {
 			print OUT "\n";
 			next;
 		}
-		if (($all || $mem) && /^"unrolled bcopy unaligned/) {
+		if (($all || $mem) && /^unrolled bcopy unaligned/) {
 			print OUT "\"unrolled bcopy unaligned\n";
 			while (<FD>) {
 				last if /^\s*$/;
@@ -130,7 +130,7 @@ foreach $file (@ARGV) {
 			print OUT "\n";
 			next;
 		}
-		if (($all || $mem) && /^"unrolled partial bcopy unaligned/) {
+		if (($all || $mem) && /^unrolled partial bcopy unaligned/) {
 			print OUT "\"unrolled partial bcopy unaligned\n";
 			while (<FD>) {
 				last if /^\s*$/;

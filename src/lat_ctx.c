@@ -102,7 +102,7 @@ main(int ac, char **av)
 	if (gettime() == 0) return(0);
 	state.overhead = gettime();
 	state.overhead /= get_n();
-	fprintf(stderr, "\n\"size=%dk ovr=%.2f\n", 
+	fprintf(stderr, "\nsize=%dk ovr=%.2f\n", 
 		state.process_size/1024, state.overhead);
 
 	/* compute the context switch cost for N processes */

@@ -154,23 +154,23 @@ foreach $file (@ARGV) {
 			$bw = sprintf("%.2f", $_[4] / 1024.);
 			push(@bw_file, $bw);
 		}
-		if (/^"mappings/) {
+		if (/^mappings/) {
 			$value = &getbiggest("memory mapping timing");
 			push(@lat_mappings, $value);
 		}
-		if (/^"read bandwidth/) {
+		if (/^read bandwidth/) {
 			$value = &getbiggest("reread timing");
 			push(@bw_reread, $value);
 		}
-		if (/^"Mmap read bandwidth/) {
+		if (/^Mmap read bandwidth/) {
 			$value = &getbiggest("mmap reread timing");
 			push(@bw_mmap, $value);
 		}
-		if (/^"libc bcopy unaligned/) {
+		if (/^libc bcopy unaligned/) {
 			$value = &getbiggest("libc bcopy timing");
 			push(@bw_bcopy_libc, $value);
 		}
-		if (/^"unrolled bcopy unaligned/) {
+		if (/^unrolled bcopy unaligned/) {
 			$value = &getbiggest("unrolled bcopy timing");
 			push(@bw_bcopy_unrolled, $value);
 		}
@@ -187,7 +187,7 @@ foreach $file (@ARGV) {
 			push(@lat_fs_create, int(1000000/$_[2]));
 			push(@lat_fs_delete, int(1000000/$_[3]));
 		}
-		if (/^"stride=128/) {
+		if (/^stride=128/) {
 			$save = -1;
 			while (<FD>) {
 				if (/^0.00098\s/) {

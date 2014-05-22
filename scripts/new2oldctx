@@ -2,7 +2,7 @@
 # Convert the new format:
 # Context switch of 8 4k processes: 64.17 (60.02 overhead)
 # to the old format:
-#"size=0 ovr=22
+# size=0 ovr=22
 # 2 8
 # 4 14
 # 8 18
@@ -26,6 +26,6 @@ foreach $size ("0k", "4k", "16k", "32k", "64k") {
 		($a[$i],$b[$i],$c[$i]) = @tmp;
 		$i++;
 	}
-	print "\n\"size=$size \n";
+	print "\nsize=$size \n";
 	print @c;
 }

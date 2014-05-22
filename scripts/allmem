@@ -29,7 +29,7 @@ foreach $file (@ARGV) {
 			($f = $file) =~ s|.*/||;
 			print "\"$file $info[3] $info[$#info]\n";
 			while (<FD>) {
-				next unless /^"stride=128/;
+				next unless /^stride=128/;
 				last;
 			}
 			while (<FD>) {

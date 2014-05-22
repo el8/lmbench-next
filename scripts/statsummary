@@ -256,27 +256,27 @@ foreach $file (@ARGV) {
       push(@lat_pagefault, $_[3]);
       $tmp = $lat_pagefault[0];	# Just to shut up the error parser
     }
-    if (/^"mappings/) {
+    if (/^mappings/) {
       $value = &getbiggest("memory mapping timing");
       push(@lat_mappings, $value);
       $tmp = $lat_mappings[0];	# Just to shut up the error parser
     }
-    if (/^"read bandwidth/) {
+    if (/^read bandwidth/) {
       $value = &getbiggest("reread timing");
       push(@bw_reread, $value);
       $tmp = $bw_reread[0];	# Just to shut up the error parser
     }
-    if (/^"Mmap read bandwidth/) {
+    if (/^Mmap read bandwidth/) {
       $value = &getbiggest("mmap reread timing");
       push(@bw_mmap, $value);
       $tmp = $bw_mmap[0];	# Just to shut up the error parser
     }
-    if (/^"libc bcopy unaligned/) {
+    if (/^libc bcopy unaligned/) {
       $value = &getbiggest("libc bcopy timing");
       push(@bw_bcopy_libc, $value);
       $tmp = $bw_bcopy_libc[0];	# Just to shut up the error parser
     }
-    if (/^"unrolled bcopy unaligned/) {
+    if (/^unrolled bcopy unaligned/) {
       $value = &getbiggest("unrolled bcopy timing");
       push(@bw_bcopy_unrolled, $value);
       $tmp = $bw_bcopy_unrolled[0];	# Just to shut up the error parser
@@ -291,7 +291,7 @@ foreach $file (@ARGV) {
       push(@bw_mem_wr, $value);
       $tmp = $bw_mem_wr[0];	# Just to shut up the error parser
     }
-    if (/^"File system latency/) {
+    if (/^File system latency/) {
       while (<FD>) {
         next if /Id:/;
         if (/^0k/) {
@@ -368,7 +368,7 @@ foreach $file (@ARGV) {
             last if /^\s*$/ || /^20/;
       }
     }
-    if (/^"stride=128/) {
+    if (/^stride=128/) {
       $save = -1;
       while (<FD>) {
         if (/^0.00098\s/) {

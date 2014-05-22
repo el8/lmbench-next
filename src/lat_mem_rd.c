@@ -64,7 +64,7 @@ main(int ac, char **av)
 	len *= 1024 * 1024;
 
 	if (optind == ac - 1) {
-		fprintf(stderr, "\"stride=%d\n", (int)STRIDE);
+		fprintf(stderr, "stride=%d\n", (int)STRIDE);
 		for (range = LOWER; range <= len; range = step(range)) {
 			loads(len, range, STRIDE, parallel, 
 			      warmup, repetitions);
@@ -72,7 +72,7 @@ main(int ac, char **av)
 	} else {
 		for (i = optind + 1; i < ac; ++i) {
 			stride = bytes(av[i]);
-			fprintf(stderr, "\"stride=%d\n", (int)stride);
+			fprintf(stderr, "stride=%d\n", (int)stride);
 			for (range = LOWER; range <= len; range = step(range)) {
 				loads(len, range, stride, parallel, 
 				      warmup, repetitions);

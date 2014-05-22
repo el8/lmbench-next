@@ -258,23 +258,23 @@ foreach $file (@ARGV) {
 			@_ = split;
 			push(@lat_pagefault, $_[3]);
 		}
-		if (/^"mappings/) {
+		if (/^mappings/) {
 			$value = &getbiggest("memory mapping timing");
 			push(@lat_mappings, $value);
 		}
-		if (/^"read bandwidth/) {
+		if (/^read bandwidth/) {
 			$value = &getbiggest("reread timing");
 			push(@bw_reread, $value);
 		}
-		if (/^"Mmap read bandwidth/) {
+		if (/^Mmap read bandwidth/) {
 			$value = &getbiggest("mmap reread timing");
 			push(@bw_mmap, $value);
 		}
-		if (/^"libc bcopy unaligned/) {
+		if (/^libc bcopy unaligned/) {
 			$value = &getbiggest("libc bcopy timing");
 			push(@bw_bcopy_libc, $value);
 		}
-		if (/^"unrolled bcopy unaligned/) {
+		if (/^unrolled bcopy unaligned/) {
 			$value = &getbiggest("unrolled bcopy timing");
 			push(@bw_bcopy_unrolled, $value);
 		}
@@ -291,7 +291,7 @@ foreach $file (@ARGV) {
 			push(@mem_load_par, $value);
 		}
 
-		if (/^"File system latency/) {
+		if (/^File system latency/) {
 			while (<FD>) {
 				next if /Id:/;
 				if (/^0k/) {
@@ -357,7 +357,7 @@ foreach $file (@ARGV) {
 		if (/^Random load latency/) {
 			$lat_mem_rd_type = 2;
 		}
-		if (/^"stride=128/) {
+		if (/^stride=128/) {
 			$save = -1;
 			while (<FD>) {
 				if (/^\s*$/) {
@@ -379,7 +379,7 @@ foreach $file (@ARGV) {
 				push(@lat_mem, $save);
 			}
 		}
-		if (/^"stride=16/) {
+		if (/^stride=16/) {
 			$save = -1;
 			while (<FD>) {
 				if (/^\s*$/) {
