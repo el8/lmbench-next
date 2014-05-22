@@ -23,12 +23,18 @@ export ENOUGH TIMING_O LOOP_O SYNC_MAX LINE_SIZE LMBENCH_SCHED
 
 if [ X$FILE = X ]
 then	FILE=/tmp/XXX
-	touch $FILE || echo Can not create $FILE >> ${OUTPUT}
+	touch $FILE || echo Cannot create $FILE >> ${OUTPUT}
 fi
 if [ X$MB = X ]
 then	MB=8
 fi
 AVAILKB=`expr $MB \* 1024`
+
+# Create test file if needed
+if [ ! -f $FILE ]
+then
+	`dd if=/dev/zero of=$FILE bs=1M count=$MB`
+fi
 
 # Figure out how big we can go for stuff that wants to use
 # all and half of memory.
