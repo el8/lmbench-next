@@ -19,9 +19,6 @@
 #define	STRIDE	(10*PSIZE)
 #define	MINSIZE	(STRIDE*2)
 
-#define	CHK(x)	if ((x) == -1) { perror("x"); exit(1); }
-
-
 typedef struct _state {
 	size_t	size;
 	int	fd;
@@ -117,7 +114,9 @@ init(iter_t iterations, void* cookie)
 		}
 		state->name = s;
 	}
-	CHK(state->fd = open(state->name, O_RDWR));
+	state->fd = open(state->name, O_RDWR);
+	if (fd < 0)
+		DIE_PERROR("open failed");
 	if (state->clone) unlink(state->name);
 	if (seekto(state->fd, 0, SEEK_END) < state->size) {
 		fprintf(stderr, "Input file too small\n");
@@ -156,10 +155,8 @@ domapping(iter_t iterations, void *cookie)
 #else
 		where = mmap(0, size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
 #endif
-		if ((long)where == -1) {
-			perror("mmap");
-			exit(1);
-		}
+		if ((long)where == -1)
+			DIE_PERROR("mmap failed");
 		if (random) {
 			end = where + size;
 			for (p = where; p < end; p += STRIDE) {
