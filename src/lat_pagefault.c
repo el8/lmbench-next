@@ -129,7 +129,7 @@ initialize(iter_t iterations, void* cookie)
 	state->pages = permutation(state->npages, pagesize);
 
 	if (state->size < 1024*1024) {
-		fprintf(stderr, "lat_pagefault: %s too small\n", state->file);
+		fprintf(stderr, "lat_pagefault: %s too small, please provide %d space!\n", state->file, 1024*1024);
 		exit(1);
 	}
 	state->where = mmap(0, state->size, 
