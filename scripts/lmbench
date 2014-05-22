@@ -149,7 +149,6 @@ then	/bin/rm -rf $SYNC
 	fi
 fi
 
-date >> ${OUTPUT}
 echo Latency measurements >> ${OUTPUT}
 msleep 250
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_SYSCALL = XYES ]; then
@@ -225,7 +224,7 @@ if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_MMAP = XYES ]; then
 fi
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_FILE = XYES ]; then
 	if [ X$SLOWFS != XYES ]
-	then	date >> ${OUTPUT}
+	then
 		echo Calculating file system latency >> ${OUTPUT}
 		msleep 250
 		echo '"File system latency' 1>&2
@@ -248,7 +247,6 @@ if [ X$BENCHMARK_HARDWARE = XYES ]; then
 	fi
 fi
 
-date >> ${OUTPUT}
 echo Local networking >> ${OUTPUT}
 
 SERVERS="lat_udp lat_tcp lat_connect bw_tcp"
@@ -279,7 +277,6 @@ if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_TCP = XYES ]; then
 fi
 bw_tcp -S localhost
 
-date >> ${OUTPUT}
 echo Bandwidth measurements >> ${OUTPUT}
 msleep 250
 
@@ -357,7 +354,6 @@ if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_HARDWARE = XYES \
 fi
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_CTX = XYES ]; then
-	date >> ${OUTPUT}
 	echo Calculating context switch overhead >> ${OUTPUT}
 	msleep 250
 	if [ $MB -ge 8 ]
@@ -378,7 +374,6 @@ fi
 
 if [ X$BENCHMARK_HARDWARE = XYES -o X$BENCHMARK_MEM = XYES ]; then
 	if [ $SYNC_MAX = 1 ]; then
-	    date >> ${OUTPUT}
 	    echo Calculating effective TLB size >> ${OUTPUT}
 	    msleep 250
 	    if [ X$LINE_SIZE = X ]
@@ -389,26 +384,22 @@ if [ X$BENCHMARK_HARDWARE = XYES -o X$BENCHMARK_MEM = XYES ]; then
 	    fi
 	    echo "" 1>&2
 
-	    date >> ${OUTPUT}
 	    echo Calculating memory load parallelism >> ${OUTPUT}
 	    msleep 250
 	    echo "Memory load parallelism" 1>&2
 	    par_mem -L $LINE_SIZE -M ${MB}M
 	    echo "" 1>&2
 
-#	    date >> ${OUTPUT}
 #	    echo Calculating cache parameters >> ${OUTPUT}
 #	    msleep 250
 #	    cache -L $LINE_SIZE -M ${MB}M
 	fi
 
-	date >> ${OUTPUT}
 	echo McCalpin\'s STREAM benchmark >> ${OUTPUT}
 	msleep 250
 	stream -P $SYNC_MAX -M ${MB}M
 	stream -P $SYNC_MAX -v 2 -M ${MB}M
 
-	date >> ${OUTPUT}
 	echo Calculating memory load latency >> ${OUTPUT}
 	msleep 250
 	echo "" 1>&2
