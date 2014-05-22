@@ -381,7 +381,12 @@ if [ X$BENCHMARK_HARDWARE = XYES -o X$BENCHMARK_MEM = XYES ]; then
 	    date >> ${OUTPUT}
 	    echo Calculating effective TLB size >> ${OUTPUT}
 	    msleep 250
-	    tlb -L $LINE_SIZE -M ${MB}M
+	    if [ X$LINE_SIZE = X ]
+	    then
+		tlb -M ${MB}M >> ${OUTPUT}
+	    else 
+		tlb -L $LINE_SIZE -M ${MB}M >> ${OUTPUT}
+	    fi
 	    echo "" 1>&2
 
 	    date >> ${OUTPUT}
