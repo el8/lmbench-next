@@ -1,5 +1,5 @@
 /*
- * tlb.c - guess the cache line size
+ * tlb.c - guess the number of TLB entries
  *
  * usage: tlb [-c] [-L <line size>] [-M len[K|M]] [-W <warmup>] [-N <repetitions>]
  *
