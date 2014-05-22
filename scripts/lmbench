@@ -60,6 +60,10 @@ then	if [ "X$DISKS" != X ]
 	MP=Y
 fi
 
+# Get path to ourselve
+SCRIPT="`readlink -e $0`"
+SCRIPTPATH="`dirname $SCRIPT`"
+
 # Figure out as much stuff as we can about this system.
 # Sure would be nice if everyone had SGI's "hinv".
 echo \[lmbench3.0 results for `uname -a`] 1>&2
@@ -175,7 +179,7 @@ if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_UNIX = XYES ]; then
 	lat_unix -P $SYNC_MAX
 fi
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_PROC = XYES ]; then
-	cp hello /tmp/hello
+	cp $SCRIPTPATH/hello /tmp/hello
 	for i in fork exec shell
 	do	lat_proc -P $SYNC_MAX $i
 	done
