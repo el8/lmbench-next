@@ -70,8 +70,8 @@ SRCS =  bw_file_rd.c bw_mem.c bw_mmap_rd.c bw_pipe.c bw_tcp.c bw_udp.c	\
 	lat_usleep.c lat_pmake.c  					\
 	lib_debug.c lib_mem.c lib_stats.c lib_tcp.c lib_timing.c 	\
 	lib_udp.c lib_unix.c lib_sched.c				\
-	line.c lmdd.c lmhttp.c par_mem.c par_ops.c loop_o.c memsize.c 	\
-	mhz.c msleep.c rhttp.c seek.c timing_o.c tlb.c stream.c		\
+	line.c lmdd.c par_mem.c par_ops.c loop_o.c memsize.c 		\
+	mhz.c msleep.c seek.c timing_o.c tlb.c stream.c			\
 	bench.h lib_debug.h lib_tcp.h lib_udp.h lib_unix.h names.h 	\
 	stats.h timing.h version.h
 
@@ -86,9 +86,9 @@ ASMS =  $O/bw_file_rd.s $O/bw_mem.s $O/bw_mmap_rd.s $O/bw_pipe.s 	\
 	$O/lib_debug.s $O/lib_mem.s	\
 	$O/lib_stats.s $O/lib_tcp.s $O/lib_timing.s $O/lib_udp.s	\
 	$O/lib_unix.s $O/lib_sched.s					\
-	$O/line.s $O/lmdd.s $O/lmhttp.s $O/par_mem.s	\
+	$O/line.s $O/lmdd.s $O/par_mem.s	\
 	$O/par_ops.s $O/loop_o.s $O/memsize.s $O/mhz.s $O/msleep.s	\
-	$O/rhttp.s $O/timing_o.s $O/tlb.s $O/stream.s			\
+	$O/timing_o.s $O/tlb.s $O/stream.s				\
 	$O/cache.s $O/lat_dram_page.s $O/lat_pmake.s $O/lat_rand.s	\
 	$O/lat_usleep.s $O/lat_cmd.s
 EXES =	$O/bw_file_rd $O/bw_mem $O/bw_mmap_rd $O/bw_pipe $O/bw_tcp 	\
@@ -98,7 +98,7 @@ EXES =	$O/bw_file_rd $O/bw_mem $O/bw_mmap_rd $O/bw_pipe $O/bw_tcp 	\
 	$O/lat_connect $O/lat_fs $O/lat_sig $O/lat_mem_rd $O/lat_ctx	\
 	$O/lat_sem 							\
 	$O/memsize $O/lat_unix $O/lmdd $O/timing_o $O/enough		\
-	$O/msleep $O/loop_o $O/lat_fifo $O/lmhttp $O/lat_http		\
+	$O/msleep $O/loop_o $O/lat_fifo					\
 	$O/lat_fcntl $O/disk $O/lat_unix_connect $O/flushdisk		\
 	$O/lat_ops $O/line $O/tlb $O/par_mem $O/par_ops 		\
 	$O/stream
@@ -239,12 +239,6 @@ $O/getopt.o : getopt.c $(INCS)
 $(UTILS) :
 	-cd ../scripts; make get
 
-# Do not remove the next line, $(MAKE) depend needs it
-# MAKEDEPEND follows
-$O/rhttp.s:rhttp.c timing.h stats.h bench.h 
-$O/rhttp:  rhttp.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/rhttp rhttp.c $O/lmbench.a $(LDLIBS)
-
 $O/http.s:http.c timing.h stats.h bench.h 
 $O/http:  http.c timing.h stats.h bench.h $O/lmbench.a
 	$(COMPILE) -o $O/http http.c $O/lmbench.a $(LDLIBS)
@@ -260,14 +254,6 @@ $O/mhz: mhz.c timing.h stats.h bench.h $O/lmbench.a
 $O/lat_ctx.s: lat_ctx.c timing.h stats.h bench.h
 $O/lat_ctx: lat_ctx.c timing.h stats.h bench.h $O/lmbench.a
 	$(COMPILE) -o $O/lat_ctx lat_ctx.c $O/lmbench.a $(LDLIBS)
-
-$O/lmhttp.s:lmhttp.c timing.h stats.h bench.h
-$O/lmhttp:  lmhttp.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lmhttp lmhttp.c $O/lmbench.a $(LDLIBS)
-
-$O/lat_http.s:lat_http.c timing.h stats.h bench.h
-$O/lat_http:  lat_http.c timing.h stats.h bench.h $O/lmbench.a
-	$(COMPILE) -o $O/lat_http lat_http.c $O/lmbench.a $(LDLIBS)
 
 $O/bw_file_rd.s:bw_file_rd.c timing.h stats.h bench.h
 $O/bw_file_rd:  bw_file_rd.c timing.h stats.h bench.h $O/lmbench.a

@@ -245,15 +245,9 @@ fi
 
 date >> ${OUTPUT}
 echo Local networking >> ${OUTPUT}
-if [ ! -d ../../src/webpage-lm ]
-then	(cd ../../src && tar xf webpage-lm.tar)
-	sync
-	sleep 1
-fi
+
 SERVERS="lat_udp lat_tcp lat_rpc lat_connect bw_tcp"
 for server in $SERVERS; do $server -s; done
-DOCROOT=../../src/webpage-lm lmhttp 8008 &
-sleep 2;
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_UDP = XYES ]; then
 	lat_udp -P $SYNC_MAX localhost
@@ -285,13 +279,6 @@ if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_TCP = XYES ]; then
 	echo "" 1>&2
 fi
 bw_tcp -S localhost
-
-if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_HTTP = XYES ]; then
-	# I want a hot cache number
-	lat_http localhost 8008 < ../../src/webpage-lm/URLS > /dev/null 2>&1
-	lat_http localhost 8008 < ../../src/webpage-lm/URLS
-fi
-lat_http -S localhost 8008
 
 for remote in $REMOTE 
 do
@@ -332,13 +319,6 @@ do
 		echo "" 1>&2
 	fi
 	bw_tcp -S $remote 
-
-	if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_HTTP = XYES ]; then
-		# I want a hot cache number
-		lat_http $remote 8008 < ../../src/webpage-lm/URLS > /dev/null 2>&1
-		lat_http $remote 8008 < ../../src/webpage-lm/URLS
-	fi
-	lat_http -S $remote 8008
 
 	RM=
 	for server in $SERVERS

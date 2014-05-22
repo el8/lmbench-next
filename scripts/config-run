@@ -361,13 +361,6 @@ if [ X$BENCHMARK_DEVELOPMENT = XYES ]; then
 	    *)		BENCHMARK_RPC=YES;;
 	esac
 
-	echo $ECHON "HTTP [default yes]: $ECHOC"
-	read bench
-	case "$bench" in
-	    [nN]*)	BENCHMARK_HTTP=NO;;
-	    *)		BENCHMARK_HTTP=YES;;
-	esac
-
 	echo $ECHON "BCOPY [default yes]: $ECHOC"
 	read bench
 	case "$bench" in
@@ -793,7 +786,6 @@ echo BENCHMARK_UDP=$BENCHMARK_UDP >> $C
 echo BENCHMARK_TCP=$BENCHMARK_TCP >> $C
 echo BENCHMARK_CONNECT=$BENCHMARK_CONNECT >> $C
 echo BENCHMARK_RPC=$BENCHMARK_RPC >> $C
-echo BENCHMARK_HTTP=$BENCHMARK_HTTP >> $C
 echo BENCHMARK_BCOPY=$BENCHMARK_BCOPY >> $C
 echo BENCHMARK_MEM=$BENCHMARK_MEM >> $C
 echo BENCHMARK_OPS=$BENCHMARK_OPS >> $C
