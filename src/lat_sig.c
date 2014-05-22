@@ -85,10 +85,8 @@ initialize(iter_t iterations, void* cookie)
 
 	fd = open(state->fname, 0);
 	state->where = mmap(0, 4096, PROT_READ, MAP_SHARED, fd, 0);
-	if ((long)state->where == -1) {
-		perror("mmap");
-		exit(1);
-	}
+	if ((long)state->where == -1)
+		DIE_PERROR("mmap failed");
 
 	sa.sa_handler = prot;
 	sigemptyset(&sa.sa_mask);
