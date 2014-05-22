@@ -35,19 +35,8 @@ doc.x:
 	cd doc && $(MAKE) x
 
 clobber clean: 
-	for i in doc src results scripts; do \
-		echo ===== $$i =====; \
-		(cd $$i && $(MAKE) clean); \
-	done
+	for i in doc src results; do (cd $$i && $(MAKE) clean);	done
 	/bin/rm -rf bin/*
-	-bk clean 
-
-get: 
-	for i in doc src results scripts; do \
-		echo ===== $$i =====; \
-		(cd $$i && bk get -q); \
-	done
-	@co -q
 
 info: 
 	for i in doc src results scripts; do \

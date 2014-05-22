@@ -322,7 +322,6 @@ get:	# nothing to do
 
 clean:
 	/bin/rm -f PS/* GIF/* HTML/* tmp/* summary.roff
-	-bk clean
 
 distclean:
 	/bin/rm -fr PS  GIF   HTML   tmp   summary.roff
