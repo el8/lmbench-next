@@ -115,7 +115,7 @@ init(iter_t iterations, void* cookie)
 		state->name = s;
 	}
 	state->fd = open(state->name, O_RDWR);
-	if (fd < 0)
+	if (state->fd < 0)
 		DIE_PERROR("open failed");
 	if (state->clone) unlink(state->name);
 	if (seekto(state->fd, 0, SEEK_END) < state->size) {
