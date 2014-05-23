@@ -467,20 +467,25 @@ if [ X$BENCHMARK_HARDWARE = XYES -o X$BENCHMARK_MEM = XYES ]
 then
 	if [ $SYNC_MAX = 1 ]
 	then
-	    echo Calculating effective TLB size >> ${OUTPUT}
-	    echo Effective TLB size 1>&2
-	    if [ X$LINE_SIZE = X ]
-	    then
-		tlb -M ${MB}M >> ${OUTPUT}
-	    else 
-		tlb -L $LINE_SIZE -M ${MB}M >> ${OUTPUT}
-	    fi
-	    echo "" 1>&2
+		echo Calculating effective TLB size >> ${OUTPUT}
+		echo Effective TLB size 1>&2
+		if [ X$LINE_SIZE = X ]
+		then
+			tlb -M ${MB}M >> ${OUTPUT}
+		else 
+			tlb -L $LINE_SIZE -M ${MB}M >> ${OUTPUT}
+		fi
+		echo "" 1>&2
 
-	    echo Calculating memory load parallelism >> ${OUTPUT}
-	    echo "Memory load parallelism" 1>&2
-	    par_mem -L $LINE_SIZE -M ${MB}M
-	    echo "" 1>&2
+		echo Calculating memory load parallelism >> ${OUTPUT}
+		echo "Memory load parallelism" 1>&2
+		if [ X$LINE_SIZE = X ]
+		then
+			par_mem -M ${MB}M
+		else
+			par_mem -L $LINE_SIZE -M ${MB}M
+		fi
+		echo "" 1>&2
 	fi
 
 	echo Calculating McCalpin\'s STREAM benchmark >> ${OUTPUT}
