@@ -133,6 +133,9 @@ os: lmbench
 	@if [ ! -f $(CONFIG) ]; then env OS="${OS}" ../scripts/config-run; fi
 	@env OS="${OS}" BENCHMARK_HARDWARE=NO  BENCHMARK_OS=YES ../scripts/results
 
+tags:
+	ctags *.h *.c
+
 install: lmbench
 	@env CFLAGS=-O MAKE="$(MAKE)"  MAKEFLAGS="$(MAKEFLAGS)" CC="${CC}" OS="${OS}" ../scripts/build install-target
 
