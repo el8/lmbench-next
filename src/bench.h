@@ -323,7 +323,7 @@ extern char *client_rpc_xact_1();
 
 #define DIE_PERROR(...)                                                 \
         do {                                                            \
-		fprintf(stderr, "%s:%s", __FILE__, __LINE__);		\
+		fprintf(stderr, "%s:%d", __FILE__, __LINE__);		\
 		perror(COMP ":" __VA_ARGS__);				\
                 exit(1);						\
         } while (0)
