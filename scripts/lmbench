@@ -216,19 +216,7 @@ rm -f $FILE
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_FILE = XYES ]
 then
 	# choose one sample bandwidth from the middle of the pack
-	sample=`expr $SYNC_MAX / 2`
-	i=0
-	while [ $i -lt $SYNC_MAX ]
-	do
-		if [ $i -eq $sample ]
-		then 
-			lmdd label="File $FILE write bandwidth: " of=$FILE move=${MB}m fsync=1 print=3 &
-		else
-			lmdd label="File $FILE write bandwidth: " of=$FILE.$i move=${MB}m fsync=1 print=3 >/dev/null 2>&1 &
-		fi
-		i=`expr $i + 1`
-	done
-	wait
+	lmdd label="File $FILE write bandwidth: " of=$FILE move=${MB}m fsync=1 print=3
 	rm -f $FILE.*
 fi
 
