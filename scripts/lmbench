@@ -4,30 +4,33 @@
 #
 # Hacked by Larry McVoy (lm@sun.com, lm@sgi.com, lm@bitmover.com).
 # Copyright (c) 1994 Larry McVoy.  GPLed software.
-# $Id$
-
+#
 # Make sure we can find: ./cmd, df, and netstat
-PATH=.:../../scripts:$PATH:/etc:/usr/etc:/sbin:/usr/sbin
+PATH=.:$PATH:/sbin:/usr/sbin
 export PATH
 
 if [ -f $1 ]
-then	. $1
+then
+	. $1
 	echo "[Using config in $1]" 1>&2
 else
 	echo "[Using defaults]" 1>&2
 	ENOUGH=1000000
 	TIMING_O=0
 	LOOP_O=0
-	LINE_SIZE=512
+	LINE_SIZE=256
 fi
 export ENOUGH TIMING_O LOOP_O SYNC_MAX LINE_SIZE LMBENCH_SCHED
 
 if [ X$FILE = X ]
-then	FILE=/tmp/XXX
+then
+	FILE=/tmp/XXX
 	touch $FILE || echo Cannot create $FILE >> ${OUTPUT}
 fi
+
 if [ X$MB = X ]
-then	MB=8
+then
+	MB=8
 fi
 AVAILKB=`expr $MB \* 1024`
 
@@ -50,14 +53,17 @@ do
 	i=`expr $i \* 2`
 done
 
-
 if [ X$FSDIR = X ]
-then	FSDIR=/usr/tmp/lat_fs
+then
+	FSDIR=/usr/tmp/lat_fs
 fi
+
 MP=N
 if [ $SYNC_MAX -gt 1 ]
-then	if [ "X$DISKS" != X ]
-	then	echo "MP and disks are mutually exclusive (sorry)"
+then
+	if [ "X$DISKS" != X ]
+	then
+		echo "MP and disks are mutually exclusive (sorry)"
 		exit 1
 	fi
 	MP=Y
@@ -225,7 +231,7 @@ fi
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_FILE = XYES ]; then
 	if [ X$SLOWFS != XYES ]
 	then
-		echo Calculating file system latency >> ${OUTPUT}
+		echo Calculating file system latency >> $OUTPUT
 		echo "File system latency" 1>&2
 		lat_fs $FSDIR
 		echo "" 1>&2
