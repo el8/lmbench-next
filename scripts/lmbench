@@ -5,6 +5,9 @@
 # Hacked by Larry McVoy (lm@sun.com, lm@sgi.com, lm@bitmover.com).
 # Copyright (c) 1994 Larry McVoy.  GPLed software.
 #
+# Updated by Jan Glauber (jan.glauber@gmail.com)
+# Copyright 2014 Harman Becker Automotive GmbH
+#
 
 # Get path to ourselve
 SCRIPT=$PWD

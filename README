@@ -1,30 +1,40 @@
+README for lmbench-next
+==========================
+
+The goal is to modernize lmbench so that it runs smooth on modern Linux systems.
+It probably breaks stuff for non-Linux systems.
+
 Major changes compared to version 3.0-a9:
 * Refine cross-compile support
 * Remove dependency on make on the target
 * Support WARMUPS, REPETITIONS parameters from lmbench script
 * Allow realtime scheduler and CPU pinning for most test cases
-* Set default optimization to -O2
+* Set default compiler optimization to -O2
+* Add information about used compiler and flags to output
 * Removed hand-written HTTP 1.0 server and rhttp tests
 * Removed MP/SYNC_MAX from default script
+* add cgroup support
 * Fixed bugs
 
-To run the benchmark, you should be able to say:
-	cd src
-	make results
+Apart from minor changes the testcases stay unmodified.
 
-If you want to see how you did compared to the other system results
-included here, say
 
-	make see
+To run the benchmark, you'll need to create a config file first.
+The config file could be created manualy from configs/template
+or using the (incomplete) scripts/config-run. 
+
+	[set CROSS_COMPILE and ARCH to your toolchain]
+	make
+	[copy bin/$ARCH to your target]
+	run bin/$ARCH/lmbench <config file>
 
 Be warned that many of these benchmarks are sensitive to other things
 being run on the system, mainly from CPU cache and CPU cycle effects.
-So make sure your screen saver is not running, etc.
+So it is a good idea to stop as much as possible programs, disable
+power management, etc.
 
-It's a good idea to do several runs and compare the output like so
+It's a good idea to do several runs and compare the output. Also
+WARMUPS and REPETITIONS parameters help to increase stability of the
+result.
 
-	make results
-	make rerun
-	make rerun
-	make rerun
-	cd Results && make LIST=<your OS>/*
+Questions/Feedback welcome: jan <dot> glauber <at> gmail <dot> com
