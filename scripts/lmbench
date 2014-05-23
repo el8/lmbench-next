@@ -14,7 +14,9 @@ SCRIPTPATH="`dirname $SCRIPT`"
 PATH=.:${SCRIPTPATH}:${PATH}:/sbin:/usr/sbin
 export PATH
 
-if [ -f $1 ]
+OUTPUT="/dev/tty"
+
+if [ -f "$1" ]
 then
 	. $1
 	echo "[Using config in $1]" >> ${OUTPUT}
@@ -24,11 +26,10 @@ else
 	TIMING_O=0
 	LOOP_O=0
 	LINE_SIZE=256
-	SYNC_MAX=1
 	WARMUPS=0
 	REPETITIONS=-1
 fi
-export ENOUGH TIMING_O LOOP_O SYNC_MAX LINE_SIZE LMBENCH_SCHED WARMUPS REPETITIONS
+export ENOUGH TIMING_O LOOP_O LINE_SIZE LMBENCH_SCHED WARMUPS REPETITIONS
 
 if [ X$FILE = X ]
 then
@@ -63,7 +64,7 @@ done
 
 if [ X$FSDIR = X ]
 then
-	FSDIR=/usr/tmp/lat_fs
+	FSDIR=/tmp/lat_fs
 fi
 
 # Figure out as much stuff as we can about this system.
@@ -108,7 +109,7 @@ echo \[`date`] 1>&2
 echo \[`uptime`] 1>&2
 
 # busybox might disable -i, just do a full ifconfig then
-netstat -i >& /dev/null
+`netstat -i >& /dev/null`
 if [ $? -ne 0 ]
 then
 	ifconfig -a 1>&2
@@ -153,6 +154,11 @@ then
 	fi
 fi
 
+# TODO: set scheduling policy and prio and pin to CPU
+
+#
+# B E N C H M A R K S
+#
 echo "Calculating latency measurements" >> ${OUTPUT}
 echo "Latency measurements" 1>&2
 
