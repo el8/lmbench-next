@@ -27,7 +27,25 @@ else
 	LOOP_O=0
 	LINE_SIZE=256
 	WARMUPS=0
-	REPETITIONS=-1
+	REPETITIONS=1
+	BENCHMARK_OS="YES"
+	BENCHMARK_SYSCALL="YES"
+	BENCHMARK_OPS="YES"
+	BENCHMARK_SELECT="YES"
+	BENCHMARK_SIG="YES"
+	BENCHMARK_PIPE="YES"
+	BENCHMARK_UNIX="YES"
+	BENCHMARK_PROC="YES"
+	BENCHMARK_HARDWARE="YES"
+	BENCHMARK_PAGEFAULT="YES"
+	BENCHMARK_MMAP="YES"
+	BENCHMARK_FILE="YES"
+	BENCHMARK_UDP="YES"
+	BENCHMARK_TCP="YES"
+	BENCHMARK_CONNECT="YES"
+	BENCHMARK_BCOPY="YES"
+	BENCHMARK_CTX="YES"
+	BENCHMARK_MEM="YES"
 fi
 export ENOUGH TIMING_O LOOP_O LINE_SIZE LMBENCH_SCHED WARMUPS REPETITIONS
 
@@ -144,8 +162,13 @@ fi
 #
 # B E N C H M A R K S
 #
-echo "\nCalculating latency measurements" >> ${OUTPUT}
-echo "\nLatency measurements" 1>&2
+
+# didn't list *everything* here
+if [ X$BENCHMARK_SYSCALL = XYES -o X$BENCHMARK_OPS = XYES ]
+then
+	echo "\nCalculating latency measurements" >> ${OUTPUT}
+	echo "\nLatency measurements" 1>&2
+fi
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_SYSCALL = XYES ]
 then
@@ -254,29 +277,35 @@ then
 	fi
 fi
 
-echo "Calculating local networking" >> ${OUTPUT}
-echo "Local networking" 1>&2
+if [ X$BENCHMARK_TCP = XYES -o X$BENCHMARK_UDP = XYES -o X$BENCHMARK_CONNECT = XYES ]
+then
+	echo "Calculating local networking" >> ${OUTPUT}
+	echo "Local networking" 1>&2
 
-SERVERS="lat_udp lat_tcp lat_connect bw_tcp"
-for server in $SERVERS; do $server -s; done
+	SERVERS="lat_udp lat_tcp lat_connect bw_tcp"
+	for server in $SERVERS
+	do
+		$server -s
+	done
+fi
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_UDP = XYES ]
 then
 	lat_udp -W $WARMUPS -N $REPETITIONS localhost
+	lat_udp -S localhost
 fi
-lat_udp -S localhost
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_TCP = XYES ]
 then
 	lat_tcp -W $WARMUPS -N $REPETITIONS localhost
+	lat_tcp -S localhost
 fi
-lat_tcp -S localhost
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_CONNECT = XYES ]
 then
 	lat_connect -W $WARMUPS -N $REPETITIONS localhost
+	lat_connect -S localhost
 fi
-lat_connect -S localhost
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_TCP = XYES ]
 then
@@ -285,12 +314,15 @@ then
 	for m in 1 64 128 256 512 1024 1437 10M; do
 		bw_tcp -W $WARMUPS -N $REPETITIONS -m $m localhost;
 	done
+	bw_tcp -S localhost
 	echo "" 1>&2
 fi
-bw_tcp -S localhost
 
-echo "Calculating bandwidth measurements" >> ${OUTPUT}
-echo "Bandwidth measurements" 1>&2
+if [ X$BENCHMARK_UNIX = XYES -o X$BENCHMARK_FILE = XYES -o X$BENCHMARK_PIPE = XYES -o X$BENCHMARK_MMAP = XYES ]
+then
+	echo "Calculating bandwidth measurements" >> ${OUTPUT}
+	echo "Bandwidth measurements" 1>&2
+fi
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_UNIX = XYES ]
 then
@@ -477,7 +509,6 @@ then
 	echo "" 1>&2
 fi
 
-date >> ${OUTPUT}
 echo '' 1>&2
 echo \[`date`] 1>&2
 
