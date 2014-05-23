@@ -66,6 +66,43 @@ rusage(void)
 
 #endif	/* RUSAGE */
 
+uint64
+tvdelta(struct timeval *start, struct timeval *stop)
+{
+	struct timeval td;
+	uint64	usecs;
+
+	tvsub(&td, stop, start);
+	usecs = td.tv_sec;
+	usecs *= 1000000;
+	usecs += td.tv_usec;
+	return (usecs);
+}
+
+void
+tvsub(struct timeval * tdiff, struct timeval * t1, struct timeval * t0)
+{
+	tdiff->tv_sec = t1->tv_sec - t0->tv_sec;
+	tdiff->tv_usec = t1->tv_usec - t0->tv_usec;
+	if (tdiff->tv_usec < 0 && tdiff->tv_sec > 0) {
+		tdiff->tv_sec--;
+		tdiff->tv_usec += 1000000;
+		assert(tdiff->tv_usec >= 0);
+	}
+
+	/* time shouldn't go backwards!!! */
+	if (tdiff->tv_usec < 0 || t1->tv_sec < t0->tv_sec) {
+		tdiff->tv_sec = 0;
+		tdiff->tv_usec = 0;
+	}
+}
+
+uint64
+gettime(void)
+{
+	return (tvdelta(&start_tv, &stop_tv));
+}
+
 void
 lmbench_usage(int argc, char *argv[], char* usage)
 {
@@ -1089,44 +1126,6 @@ ptime(uint64 n)
 	    "%d in %.2f secs, %.0f microseconds each\n",
 	    (int)n, s, s * 1000000 / n);
 }
-
-uint64
-tvdelta(struct timeval *start, struct timeval *stop)
-{
-	struct timeval td;
-	uint64	usecs;
-
-	tvsub(&td, stop, start);
-	usecs = td.tv_sec;
-	usecs *= 1000000;
-	usecs += td.tv_usec;
-	return (usecs);
-}
-
-void
-tvsub(struct timeval * tdiff, struct timeval * t1, struct timeval * t0)
-{
-	tdiff->tv_sec = t1->tv_sec - t0->tv_sec;
-	tdiff->tv_usec = t1->tv_usec - t0->tv_usec;
-	if (tdiff->tv_usec < 0 && tdiff->tv_sec > 0) {
-		tdiff->tv_sec--;
-		tdiff->tv_usec += 1000000;
-		assert(tdiff->tv_usec >= 0);
-	}
-
-	/* time shouldn't go backwards!!! */
-	if (tdiff->tv_usec < 0 || t1->tv_sec < t0->tv_sec) {
-		tdiff->tv_sec = 0;
-		tdiff->tv_usec = 0;
-	}
-}
-
-uint64
-gettime(void)
-{
-	return (tvdelta(&start_tv, &stop_tv));
-}
-
 double
 timespent(void)
 {

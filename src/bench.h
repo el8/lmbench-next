@@ -123,7 +123,7 @@ typedef int64 off64_t;
 #define	XFERSIZE	(64*1024)	/* all bandwidth I/O should use this */
 #endif
 
-#define	gettime		usecs_spent
+//#define	gettime		usecs_spent
 #define	streq		!strcmp
 #define	ulong		unsigned long
 
