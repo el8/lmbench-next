@@ -37,7 +37,7 @@ AVAILKB=`expr $MB \* 1024`
 # Create test file if needed
 if [ ! -f $FILE ]
 then
-	`dd if=/dev/zero of=$FILE bs=1M count=$MB > /dev/null`
+	`dd if=/dev/zero of=$FILE bs=1M count=$MB >& /dev/null`
 fi
 
 # Figure out how big we can go for stuff that wants to use
@@ -76,7 +76,7 @@ SCRIPTPATH="`dirname $SCRIPT`"
 # Figure out as much stuff as we can about this system.
 # Sure would be nice if everyone had SGI's "hinv".
 echo \[lmbench results for `uname -a`] 1>&2
-echo \[LMBENCH_VER: <version>] 1>&2
+echo \[LMBENCH_VERSION: LMBENCH_VERSION_PLACEHOLDER] 1>&2
 echo \[BENCHMARK_HARDWARE: ${BENCHMARK_HARDWARE}] 1>&2
 echo \[BENCHMARK_OS: ${BENCHMARK_OS}] 1>&2
 echo \[ALL: ${ALL}] 1>&2
@@ -101,7 +101,6 @@ echo \[OS: ${OS}] 1>&2
 echo \[SYNC_MAX: ${SYNC_MAX}] 1>&2
 echo \[LMBENCH_SCHED: $LMBENCH_SCHED] 1>&2
 echo \[TIMING_O: ${TIMING_O}] 1>&2
-echo \[LMBENCH VERSION: ${VERSION}] 1>&2
 echo \[USER: $USER] 1>&2
 echo \[HOSTNAME: `hostname`] 1>&2
 echo \[NODENAME: `uname -n`] 1>&2
@@ -160,8 +159,8 @@ then
 	fi
 fi
 
-echo Calculating latency measurements >> ${OUTPUT}
-echo Latency measurements 1>&2
+echo "Calculating latency measurements" >> ${OUTPUT}
+echo "Latency measurements" 1>&2
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_SYSCALL = XYES ]
 then
@@ -247,7 +246,7 @@ fi
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_MMAP = XYES ]
 then
 	echo "" 1>&2
-	echo mappings 1>&2
+	echo "mappings" 1>&2
 	for i in $ALL
 	do
 		lat_mmap -P $SYNC_MAX $i $FILE
@@ -259,7 +258,7 @@ if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_FILE = XYES ]
 then
 	if [ X$SLOWFS != XYES ]
 	then
-		echo Calculating file system latency >> $OUTPUT
+		echo "Calculating file system latency" >> $OUTPUT
 		echo "File system latency" 1>&2
 		lat_fs $FSDIR
 		echo "" 1>&2
@@ -282,8 +281,8 @@ then
 	fi
 fi
 
-echo Calculating local networking >> ${OUTPUT}
-echo Local networking 1>&2
+echo "Calculating local networking" >> ${OUTPUT}
+echo "Local networking" 1>&2
 
 SERVERS="lat_udp lat_tcp lat_connect bw_tcp"
 for server in $SERVERS; do $server -s; done
@@ -320,8 +319,8 @@ then
 fi
 bw_tcp -S localhost
 
-echo Calculating bandwidth measurements >> ${OUTPUT}
-echo Bandwidth measurements 1>&2
+echo "Calculating bandwidth measurements" >> ${OUTPUT}
+echo "Bandwidth measurements" 1>&2
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_UNIX = XYES ]
 then
@@ -336,14 +335,14 @@ fi
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_FILE = XYES ]
 then
 	echo "" 1>&2
-	echo "read bandwidth 1>&2
+	echo "read bandwidth" 1>&2
 	for i in $ALL
 	do
 		bw_file_rd -P $SYNC_MAX $i io_only $FILE
 	done
 	echo "" 1>&2
 	
-	echo "read open2close bandwidth 1>&2
+	echo "read open2close bandwidth" 1>&2
 	for i in $ALL
 	do
 		bw_file_rd -P $SYNC_MAX $i open2close $FILE
@@ -354,14 +353,14 @@ fi
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_MMAP = XYES ]
 then
 	echo "" 1>&2
-	echo "Mmap read bandwidth 1>&2
+	echo "Mmap read bandwidth" 1>&2
 	for i in $ALL
 	do
 		bw_mmap_rd -P $SYNC_MAX $i mmap_only $FILE
 	done
 	echo "" 1>&2
 
-	echo "Mmap read open2close bandwidth 1>&2
+	echo "Mmap read open2close bandwidth" 1>&2
 	for i in $ALL
 	do
 		bw_mmap_rd -P $SYNC_MAX $i open2close $FILE
@@ -373,35 +372,75 @@ fi
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_HARDWARE = XYES -o X$BENCHMARK_BCOPY = XYES ]
 then
 	echo "" 1>&2
-	echo "libc bcopy unaligned 1>&2
-	for i in $HALF; do bw_mem -P $SYNC_MAX $i bcopy; done; echo "" 1>&2
+	echo "libc bcopy unaligned" 1>&2
+	for i in $HALF
+	do
+		bw_mem -P $SYNC_MAX $i bcopy
+	done
+	echo "" 1>&2
 
-	echo "libc bcopy aligned 1>&2
-	for i in $HALF; do bw_mem -P $SYNC_MAX $i bcopy conflict; done; echo "" 1>&2
+	echo "libc bcopy aligned" 1>&2
+	for i in $HALF
+	do
+		bw_mem -P $SYNC_MAX $i bcopy conflict
+	done
+	echo "" 1>&2
 
 	echo "Memory bzero bandwidth" 1>&2
-	for i in $ALL; do bw_mem -P $SYNC_MAX $i bzero; done; echo "" 1>&2
+	for i in $ALL
+	do
+		bw_mem -P $SYNC_MAX $i bzero
+	done
+	echo "" 1>&2
 
-	echo "unrolled bcopy unaligned 1>&2
-	for i in $HALF; do bw_mem -P $SYNC_MAX $i fcp; done; echo "" 1>&2
+	echo "unrolled bcopy unaligned" 1>&2
+	for i in $HALF
+	do
+		bw_mem -P $SYNC_MAX $i fcp
+	done
+	echo "" 1>&2
 
-	echo "unrolled partial bcopy unaligned 1>&2
-	for i in $HALF; do bw_mem -P $SYNC_MAX $i cp; done; echo "" 1>&2
+	echo "unrolled partial bcopy unaligned" 1>&2
+	for i in $HALF
+	do
+		bw_mem -P $SYNC_MAX $i cp
+	done
+	echo "" 1>&2
 
 	echo "Memory read bandwidth" 1>&2
-	for i in $ALL; do bw_mem -P $SYNC_MAX $i frd; done; echo "" 1>&2
+	for i in $ALL
+	do
+		bw_mem -P $SYNC_MAX $i frd
+	done
+	echo "" 1>&2
 
 	echo "Memory partial read bandwidth" 1>&2
-	for i in $ALL; do bw_mem -P $SYNC_MAX $i rd; done; echo "" 1>&2
+	for i in $ALL
+	do
+		bw_mem -P $SYNC_MAX $i rd
+	done
+	echo "" 1>&2
 
 	echo "Memory write bandwidth" 1>&2
-	for i in $ALL; do bw_mem -P $SYNC_MAX $i fwr; done; echo "" 1>&2
+	for i in $ALL
+	do
+		bw_mem -P $SYNC_MAX $i fwr
+	done
+	echo "" 1>&2
 
 	echo "Memory partial write bandwidth" 1>&2
-	for i in $ALL; do bw_mem -P $SYNC_MAX $i wr; done; echo "" 1>&2
+	for i in $ALL
+	do
+		bw_mem -P $SYNC_MAX $i wr
+	done
+	echo "" 1>&2
 
 	echo "Memory partial read/write bandwidth" 1>&2
-	for i in $ALL; do bw_mem -P $SYNC_MAX $i rdwr; done; echo "" 1>&2
+	for i in $ALL
+	do
+		bw_mem -P $SYNC_MAX $i rdwr
+	done
+	echo "" 1>&2
 fi
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_CTX = XYES ]

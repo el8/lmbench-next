@@ -73,7 +73,7 @@ SRCS =  bw_file_rd.c bw_mem.c bw_mmap_rd.c bw_pipe.c bw_tcp.c bw_udp.c	\
 	line.c lmdd.c par_mem.c par_ops.c loop_o.c memsize.c 		\
 	mhz.c msleep.c seek.c timing_o.c tlb.c stream.c			\
 	bench.h lib_debug.h lib_tcp.h lib_udp.h lib_unix.h names.h 	\
-	stats.h timing.h version.h
+	stats.h timing.h
 
 ASMS =  $O/bw_file_rd.s $O/bw_mem.s $O/bw_mmap_rd.s $O/bw_pipe.s 	\
 	$O/bw_tcp.s $O/bw_udp.s $O/bw_unix.s $O/clock.s			\
@@ -167,7 +167,6 @@ assembler:
 tag:
 	ROOT=`cat ../CVS/Root`; \
 	MODULE=`cat ../CVS/Repository`; \
-	VERSION=`../scripts/version`; \
 	TAG=`echo lmbench_$${VERSION} | sed -e 's/-/_/g' -e 's/\\./_/g'`; \
 	cd .. \
 	&& cvs -d$${ROOT} tag -c "$${TAG}"
@@ -176,7 +175,6 @@ dist:
 	SRCDIR=`pwd`; \
 	ROOT=`cat ../CVS/Root`; \
 	MODULE=`cat ../CVS/Repository`; \
-	VERSION=`../scripts/version`; \
 	cd /tmp \
 	&& cvs -d$${ROOT} export -Dtomorrow \
 		 -d $${MODULE}-$${VERSION} $${MODULE} \
@@ -206,10 +204,9 @@ testmake: $(SRCS) $(UTILS) # used by scripts/make to test gmake
 	install install-target dist get edit get-e clean clobber \
 	share depend testmake
 
-$O/lmbench : ../scripts/lmbench version.h
+$O/lmbench : ../scripts/lmbench
 	rm -f $O/lmbench
-	VERSION=`../scripts/version`; \
-	sed -e "s/<version>/$${VERSION}/g" < ../scripts/lmbench > $O/lmbench
+	VERSION=`../scripts/version`; sed -e "s/LMBENCH_VERSION_PLACEHOLDER/$${VERSION}/g" < ../scripts/lmbench > $O/lmbench
 	chmod +x $O/lmbench
 
 $O/lmbench.a: $(LIBOBJS)
