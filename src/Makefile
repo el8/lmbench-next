@@ -187,9 +187,9 @@ testmake: $(SRCS) $(UTILS) # used by scripts/make to test gmake
 	share depend testmake
 
 $O/lmbench : ../scripts/lmbench
-	@rm -f $O/lmbench
-	@VERSION=`../scripts/version`; sed -e "s/LMBENCH_VERSION_PLACEHOLDER/$${VERSION}/g" < ../scripts/lmbench > $O/lmbench
-	@chmod +x $O/lmbench
+	rm -f $O/lmbench
+	VERSION=`../scripts/version`; sed -e "s/LMBENCH_VERSION_PLACEHOLDER/$${VERSION}/g" < ../scripts/lmbench > $O/lmbench
+	chmod +x $O/lmbench
 
 $O/lmbench.a: $(LIBOBJS)
 	/bin/rm -f $O/lmbench.a
