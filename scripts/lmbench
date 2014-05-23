@@ -20,8 +20,10 @@ else
 	LOOP_O=0
 	LINE_SIZE=256
 	SYNC_MAX=1
+	WARMUPS=0
+	REPETITIONS=-1
 fi
-export ENOUGH TIMING_O LOOP_O SYNC_MAX LINE_SIZE LMBENCH_SCHED
+export ENOUGH TIMING_O LOOP_O SYNC_MAX LINE_SIZE LMBENCH_SCHED WARMUPS REPETITIONS
 
 if [ X$FILE = X ]
 then
@@ -70,6 +72,8 @@ echo \[LMBENCH_VERSION: LMBENCH_VERSION_PLACEHOLDER] 1>&2
 echo \[BENCHMARK_HARDWARE: ${BENCHMARK_HARDWARE}] 1>&2
 echo \[BENCHMARK_OS: ${BENCHMARK_OS}] 1>&2
 echo \[ALL: ${ALL}] 1>&2
+echo \[WARMUPS: ${WARMUPS}] 1>&2
+echo \[REPETITIONS: ${REPETITIONS}] 1>&2
 echo \[DISKS: ${DISKS}] 1>&2
 echo \[DISK_DESC: ${DISK_DESC}] 1>&2
 echo \[ENOUGH: ${ENOUGH}] 1>&2
@@ -153,41 +157,41 @@ echo "Latency measurements" 1>&2
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_SYSCALL = XYES ]
 then
-	lat_syscall null
-	lat_syscall read
-	lat_syscall write
-	lat_syscall stat $STAT
-	lat_syscall fstat $STAT
-	lat_syscall open $STAT
+	lat_syscall -W $WARMUPS -N $REPETITIONS null
+	lat_syscall -W $WARMUPS -N $REPETITIONS read
+	lat_syscall -W $WARMUPS -N $REPETITIONS write
+	lat_syscall -W $WARMUPS -N $REPETITIONS stat $STAT
+	lat_syscall -W $WARMUPS -N $REPETITIONS fstat $STAT
+	lat_syscall -W $WARMUPS -N $REPETITIONS open $STAT
 fi
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_SELECT = XYES ]
 then
 	for i in 10 100 250 500
 	do
-		lat_select -n $i file
+		lat_select -W $WARMUPS -N $REPETITIONS -n $i file
 	done
 	for i in 10 100 250 500
 	do
-		lat_select -n $i tcp
+		lat_select -W $WARMUPS -N $REPETITIONS -n $i tcp
 	done
 fi
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_SIG = XYES ]
 then
-	lat_sig install
-	lat_sig catch
-	lat_sig prot $FILE
+	lat_sig -W $WARMUPS -N $REPETITIONS install
+	lat_sig -W $WARMUPS -N $REPETITIONS catch
+	lat_sig -W $WARMUPS -N $REPETITIONS prot $FILE
 fi
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_PIPE = XYES ]
 then
-	lat_pipe
+	lat_pipe -W $WARMUPS -N $REPETITIONS
 fi
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_UNIX = XYES ]
 then
-	lat_unix
+	lat_unix -W $WARMUPS -N $REPETITIONS
 fi
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_PROC = XYES ]
@@ -195,15 +199,15 @@ then
 	cp $SCRIPTPATH/hello /tmp/hello
 	for i in fork exec shell
 	do
-		lat_proc $i
+		lat_proc -W $WARMUPS -N $REPETITIONS $i
 	done
 	rm -f /tmp/hello 
 fi
 
 if [ X$BENCHMARK_HARDWARE = XYES -o X$BENCHMARK_OPS = XYES ]
 then
-	lat_ops 
-	par_ops 
+	lat_ops -W $WARMUPS -N $REPETITIONS
+	par_ops -W $WARMUPS -N $REPETITIONS
 fi
 
 rm -f $FILE
@@ -229,7 +233,7 @@ fi
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_PAGEFAULT = XYES ]
 then
-	lat_pagefault $FILE
+	lat_pagefault -W $WARMUPS -N $REPETITIONS $FILE
 fi
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_MMAP = XYES ]
@@ -238,7 +242,7 @@ then
 	echo "mappings" 1>&2
 	for i in $ALL
 	do
-		lat_mmap $i $FILE
+		lat_mmap -W $WARMUPS -N $REPETITIONS $i $FILE
 	done
 	echo "" 1>&2
 fi
@@ -249,7 +253,7 @@ then
 	then
 		echo "Calculating file system latency" >> $OUTPUT
 		echo "File system latency" 1>&2
-		lat_fs $FSDIR
+		lat_fs -W $WARMUPS -N $REPETITIONS $FSDIR
 		echo "" 1>&2
 	fi
 fi
@@ -278,44 +282,44 @@ for server in $SERVERS; do $server -s; done
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_UDP = XYES ]
 then
-	lat_udp localhost
+	lat_udp -W $WARMUPS -N $REPETITIONS localhost
 fi
-lat_udp -S localhost
+lat_udp -W $WARMUPS -N $REPETITIONS -S localhost
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_TCP = XYES ]
 then
-	lat_tcp localhost
+	lat_tcp -W $WARMUPS -N $REPETITIONS localhost
 fi
-lat_tcp -S localhost
+lat_tcp -W $WARMUPS -N $REPETITIONS -S localhost
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_CONNECT = XYES ]
 then
-	lat_connect localhost
+	lat_connect -W $WARMUPS -N $REPETITIONS localhost
 fi
-lat_connect -S localhost
+lat_connect -W $WARMUPS -N $REPETITIONS -S localhost
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_TCP = XYES ]
 then
 	echo "" 1>&2
 	echo "Socket bandwidth using localhost" 1>&2
 	for m in 1 64 128 256 512 1024 1437 10M; do
-		bw_tcp -m $m localhost; 
+		bw_tcp -W $WARMUPS -N $REPETITIONS -m $m localhost;
 	done
 	echo "" 1>&2
 fi
-bw_tcp -S localhost
+bw_tcp -W $WARMUPS -N $REPETITIONS -S localhost
 
 echo "Calculating bandwidth measurements" >> ${OUTPUT}
 echo "Bandwidth measurements" 1>&2
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_UNIX = XYES ]
 then
-	bw_unix 
+	bw_unix -W $WARMUPS -N $REPETITIONS
 fi
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_PIPE = XYES ]
 then
-	bw_pipe
+	bw_pipe -W $WARMUPS -N $REPETITIONS
 fi
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_FILE = XYES ]
@@ -324,14 +328,14 @@ then
 	echo "read bandwidth" 1>&2
 	for i in $ALL
 	do
-		bw_file_rd $i io_only $FILE
+		bw_file_rd -W $WARMUPS -N $REPETITIONS $i io_only $FILE
 	done
 	echo "" 1>&2
 	
 	echo "read open2close bandwidth" 1>&2
 	for i in $ALL
 	do
-		bw_file_rd $i open2close $FILE
+		bw_file_rd -W $WARMUPS -N $REPETITIONS $i open2close $FILE
 	done
 	echo "" 1>&2
 fi	
@@ -342,14 +346,14 @@ then
 	echo "Mmap read bandwidth" 1>&2
 	for i in $ALL
 	do
-		bw_mmap_rd $i mmap_only $FILE
+		bw_mmap_rd -W $WARMUPS -N $REPETITIONS $i mmap_only $FILE
 	done
 	echo "" 1>&2
 
 	echo "Mmap read open2close bandwidth" 1>&2
 	for i in $ALL
 	do
-		bw_mmap_rd $i open2close $FILE
+		bw_mmap_rd -W $WARMUPS -N $REPETITIONS $i open2close $FILE
 	done
 	echo "" 1>&2
 	rm -f $FILE
@@ -361,70 +365,70 @@ then
 	echo "libc bcopy unaligned" 1>&2
 	for i in $HALF
 	do
-		bw_mem $i bcopy
+		bw_mem -W $WARMUPS -N $REPETITIONS $i bcopy
 	done
 	echo "" 1>&2
 
 	echo "libc bcopy aligned" 1>&2
 	for i in $HALF
 	do
-		bw_mem $i bcopy conflict
+		bw_mem -W $WARMUPS -N $REPETITIONS $i bcopy conflict
 	done
 	echo "" 1>&2
 
 	echo "Memory bzero bandwidth" 1>&2
 	for i in $ALL
 	do
-		bw_mem $i bzero
+		bw_mem -W $WARMUPS -N $REPETITIONS $i bzero
 	done
 	echo "" 1>&2
 
 	echo "unrolled bcopy unaligned" 1>&2
 	for i in $HALF
 	do
-		bw_mem $i fcp
+		bw_mem -W $WARMUPS -N $REPETITIONS $i fcp
 	done
 	echo "" 1>&2
 
 	echo "unrolled partial bcopy unaligned" 1>&2
 	for i in $HALF
 	do
-		bw_mem $i cp
+		bw_mem -W $WARMUPS -N $REPETITIONS $i cp
 	done
 	echo "" 1>&2
 
 	echo "Memory read bandwidth" 1>&2
 	for i in $ALL
 	do
-		bw_mem $i frd
+		bw_mem -W $WARMUPS -N $REPETITIONS $i frd
 	done
 	echo "" 1>&2
 
 	echo "Memory partial read bandwidth" 1>&2
 	for i in $ALL
 	do
-		bw_mem $i rd
+		bw_mem -W $WARMUPS -N $REPETITIONS $i rd
 	done
 	echo "" 1>&2
 
 	echo "Memory write bandwidth" 1>&2
 	for i in $ALL
 	do
-		bw_mem $i fwr
+		bw_mem -W $WARMUPS -N $REPETITIONS $i fwr
 	done
 	echo "" 1>&2
 
 	echo "Memory partial write bandwidth" 1>&2
 	for i in $ALL
 	do
-		bw_mem $i wr
+		bw_mem -W $WARMUPS -N $REPETITIONS $i wr
 	done
 	echo "" 1>&2
 
 	echo "Memory partial read/write bandwidth" 1>&2
 	for i in $ALL
 	do
-		bw_mem $i rdwr
+		bw_mem -W $WARMUPS -N $REPETITIONS $i rdwr
 	done
 	echo "" 1>&2
 fi
@@ -444,7 +448,7 @@ then
 	echo "" 1>&2
 	for size in $CTX
 	do	
-		lat_ctx -s $size $N
+		lat_ctx -W $WARMUPS -N $REPETITIONS -s $size $N
 	done
 	echo "" 1>&2
 fi
@@ -481,15 +485,15 @@ then
 	echo "Memory load latency" 1>&2
 	if [ X$FASTMEM = XYES ]
 	then
-		lat_mem_rd $MB 128
+		lat_mem_rd -W $WARMUPS -N $REPETITIONS $MB 128
 	else
-		lat_mem_rd $MB 16 32 64 128 256 512 1024 
+		lat_mem_rd -W $WARMUPS -N $REPETITIONS $MB 16 32 64 128 256 512 1024 
 	fi
 	echo "" 1>&2
 
 	echo "Calculating random load latency" >> ${OUTPUT}
 	echo "Random load latency" 1>&2
-	lat_mem_rd -t $MB 16
+	lat_mem_rd -W $WARMUPS -N $REPETITIONS -t $MB 16
 	echo "" 1>&2
 fi
 
