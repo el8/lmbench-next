@@ -163,27 +163,6 @@ debug:
 assembler:
 	@env CFLAGS=-O MAKE="$(MAKE)" MAKEFLAGS="$(MAKEFLAGS)" CC="${CC}" OS="${OS}" ../scripts/build asm
 
-
-tag:
-	ROOT=`cat ../CVS/Root`; \
-	MODULE=`cat ../CVS/Repository`; \
-	TAG=`echo lmbench_$${VERSION} | sed -e 's/-/_/g' -e 's/\\./_/g'`; \
-	cd .. \
-	&& cvs -d$${ROOT} tag -c "$${TAG}"
-
-dist: 
-	SRCDIR=`pwd`; \
-	ROOT=`cat ../CVS/Root`; \
-	MODULE=`cat ../CVS/Repository`; \
-	cd /tmp \
-	&& cvs -d$${ROOT} export -Dtomorrow \
-		 -d $${MODULE}-$${VERSION} $${MODULE} \
-	&& chmod +x $${MODULE}-$${VERSION}/scripts/[a-z]* \
-	&& mv $${MODULE}-$${VERSION} lmbench-$${VERSION} \
-	&& tar czf $${SRCDIR}/../../lmbench-$${VERSION}.tgz \
-		lmbench-$${VERSION} \
-	&& rm -rf lmbench-$${VERSION};
-
 clean:
 	/bin/rm -f ../bin/*/CONFIG ../bin/*/*.[oas]
 	/bin/rm -f *.[oas]
@@ -205,9 +184,9 @@ testmake: $(SRCS) $(UTILS) # used by scripts/make to test gmake
 	share depend testmake
 
 $O/lmbench : ../scripts/lmbench
-	rm -f $O/lmbench
-	VERSION=`../scripts/version`; sed -e "s/LMBENCH_VERSION_PLACEHOLDER/$${VERSION}/g" < ../scripts/lmbench > $O/lmbench
-	chmod +x $O/lmbench
+	@rm -f $O/lmbench
+	@VERSION=`../scripts/version`; sed -e "s/LMBENCH_VERSION_PLACEHOLDER/$${VERSION}/g" < ../scripts/lmbench > $O/lmbench
+	@chmod +x $O/lmbench
 
 $O/lmbench.a: $(LIBOBJS)
 	/bin/rm -f $O/lmbench.a
