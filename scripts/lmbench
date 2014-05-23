@@ -284,19 +284,19 @@ if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_UDP = XYES ]
 then
 	lat_udp -W $WARMUPS -N $REPETITIONS localhost
 fi
-lat_udp -W $WARMUPS -N $REPETITIONS -S localhost
+lat_udp -S localhost
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_TCP = XYES ]
 then
 	lat_tcp -W $WARMUPS -N $REPETITIONS localhost
 fi
-lat_tcp -W $WARMUPS -N $REPETITIONS -S localhost
+lat_tcp -S localhost
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_CONNECT = XYES ]
 then
 	lat_connect -W $WARMUPS -N $REPETITIONS localhost
 fi
-lat_connect -W $WARMUPS -N $REPETITIONS -S localhost
+lat_connect -S localhost
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_TCP = XYES ]
 then
@@ -307,7 +307,7 @@ then
 	done
 	echo "" 1>&2
 fi
-bw_tcp -W $WARMUPS -N $REPETITIONS -S localhost
+bw_tcp -S localhost
 
 echo "Calculating bandwidth measurements" >> ${OUTPUT}
 echo "Bandwidth measurements" 1>&2

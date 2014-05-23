@@ -3,8 +3,8 @@
  *
  * Three programs in one -
  *	server usage:	lat_connect -s
- *	client usage:	lat_connect [-N <repetitions>] hostname
- *	shutdown:	lat_connect -hostname
+ *	client usage:	lat_connect [-W <warmup>] [-N <repetitions>] hostname
+ *	shutdown:	lat_connect -S hostname
  *
  * lat_connect may not be parallelized because of idiosyncracies
  * with TCP connection creation.  Basically, if the client tries
@@ -34,9 +34,9 @@ int
 main(int ac, char **av)
 {
 	state_t state;
-	int rc, c, repetitions = -1;
+	int rc, c, repetitions = -1, warmup = 0;
 	char	buf[256];
-	char	*usage = "-s\n OR [-S] [-N <repetitions>] server\n";
+	char	*usage = "-s\n OR [-S] [-W <warmup>] [-N <repetitions>] server\n";
 
 	while (( c = getopt(ac, av, "sSP:W:N:")) != EOF) {
 		switch(c) {
@@ -56,6 +56,9 @@ main(int ac, char **av)
 			close(sock);
 			exit(0);
 		}
+		case 'W':
+			warmup = atoi(optarg);
+			break;
 		case 'N':
 			repetitions = atoi(optarg);
 			break;
@@ -70,7 +73,7 @@ main(int ac, char **av)
 	}
 
 	state.server = av[optind];
-	benchmp(NULL, doclient, NULL, 0, 1, 0, repetitions, &state);
+	benchmp(NULL, doclient, NULL, 0, 1, warmup, repetitions, &state);
 
 	sprintf(buf, "TCP/IP connection cost to %s", state.server);
 	micro(buf, get_n());
