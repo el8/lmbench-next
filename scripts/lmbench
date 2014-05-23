@@ -19,6 +19,7 @@ else
 	TIMING_O=0
 	LOOP_O=0
 	LINE_SIZE=256
+	SYNC_MAX=1
 fi
 export ENOUGH TIMING_O LOOP_O SYNC_MAX LINE_SIZE LMBENCH_SCHED
 
@@ -58,17 +59,6 @@ then
 	FSDIR=/usr/tmp/lat_fs
 fi
 
-MP=N
-if [ $SYNC_MAX -gt 1 ]
-then
-	if [ "X$DISKS" != X ]
-	then
-		echo "MP and disks are mutually exclusive (sorry)"
-		exit 1
-	fi
-	MP=Y
-fi
-
 # Get path to ourselve
 SCRIPT="`readlink -e $0`"
 SCRIPTPATH="`dirname $SCRIPT`"
@@ -98,7 +88,6 @@ echo \[NETWORKS: ${NETWORKS}] 1>&2
 echo \[PROCESSORS: ${PROCESSORS}] 1>&2
 echo \[SLOWFS: ${SLOWFS}] 1>&2
 echo \[OS: ${OS}] 1>&2
-echo \[SYNC_MAX: ${SYNC_MAX}] 1>&2
 echo \[LMBENCH_SCHED: $LMBENCH_SCHED] 1>&2
 echo \[TIMING_O: ${TIMING_O}] 1>&2
 echo \[USER: $USER] 1>&2
@@ -164,41 +153,41 @@ echo "Latency measurements" 1>&2
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_SYSCALL = XYES ]
 then
-	lat_syscall -P $SYNC_MAX null
-	lat_syscall -P $SYNC_MAX read
-	lat_syscall -P $SYNC_MAX write
-	lat_syscall -P $SYNC_MAX stat $STAT
-	lat_syscall -P $SYNC_MAX fstat $STAT
-	lat_syscall -P $SYNC_MAX open $STAT
+	lat_syscall null
+	lat_syscall read
+	lat_syscall write
+	lat_syscall stat $STAT
+	lat_syscall fstat $STAT
+	lat_syscall open $STAT
 fi
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_SELECT = XYES ]
 then
 	for i in 10 100 250 500
 	do
-		lat_select -n $i -P $SYNC_MAX file
+		lat_select -n $i file
 	done
 	for i in 10 100 250 500
 	do
-		lat_select -n $i -P $SYNC_MAX tcp
+		lat_select -n $i tcp
 	done
 fi
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_SIG = XYES ]
 then
-	lat_sig -P $SYNC_MAX install
-	lat_sig -P $SYNC_MAX catch
-	lat_sig -P $SYNC_MAX prot $FILE
+	lat_sig install
+	lat_sig catch
+	lat_sig prot $FILE
 fi
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_PIPE = XYES ]
 then
-	lat_pipe -P $SYNC_MAX 
+	lat_pipe
 fi
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_UNIX = XYES ]
 then
-	lat_unix -P $SYNC_MAX
+	lat_unix
 fi
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_PROC = XYES ]
@@ -206,7 +195,7 @@ then
 	cp $SCRIPTPATH/hello /tmp/hello
 	for i in fork exec shell
 	do
-		lat_proc -P $SYNC_MAX $i
+		lat_proc $i
 	done
 	rm -f /tmp/hello 
 fi
@@ -240,7 +229,7 @@ fi
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_PAGEFAULT = XYES ]
 then
-	lat_pagefault -P $SYNC_MAX $FILE
+	lat_pagefault $FILE
 fi
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_MMAP = XYES ]
@@ -249,7 +238,7 @@ then
 	echo "mappings" 1>&2
 	for i in $ALL
 	do
-		lat_mmap -P $SYNC_MAX $i $FILE
+		lat_mmap $i $FILE
 	done
 	echo "" 1>&2
 fi
@@ -289,22 +278,19 @@ for server in $SERVERS; do $server -s; done
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_UDP = XYES ]
 then
-	lat_udp -P $SYNC_MAX localhost
+	lat_udp localhost
 fi
 lat_udp -S localhost
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_TCP = XYES ]
 then
-	lat_tcp -P $SYNC_MAX localhost
+	lat_tcp localhost
 fi
 lat_tcp -S localhost
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_CONNECT = XYES ]
 then
-	if [ $SYNC_MAX = 1 ]
-	then
-		lat_connect localhost
-	fi
+	lat_connect localhost
 fi
 lat_connect -S localhost
 
@@ -313,7 +299,7 @@ then
 	echo "" 1>&2
 	echo "Socket bandwidth using localhost" 1>&2
 	for m in 1 64 128 256 512 1024 1437 10M; do
-		bw_tcp -P $SYNC_MAX -m $m localhost; 
+		bw_tcp -m $m localhost; 
 	done
 	echo "" 1>&2
 fi
@@ -324,12 +310,12 @@ echo "Bandwidth measurements" 1>&2
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_UNIX = XYES ]
 then
-	bw_unix -P $SYNC_MAX 
+	bw_unix 
 fi
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_PIPE = XYES ]
 then
-	bw_pipe -P $SYNC_MAX 
+	bw_pipe
 fi
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_FILE = XYES ]
@@ -338,14 +324,14 @@ then
 	echo "read bandwidth" 1>&2
 	for i in $ALL
 	do
-		bw_file_rd -P $SYNC_MAX $i io_only $FILE
+		bw_file_rd $i io_only $FILE
 	done
 	echo "" 1>&2
 	
 	echo "read open2close bandwidth" 1>&2
 	for i in $ALL
 	do
-		bw_file_rd -P $SYNC_MAX $i open2close $FILE
+		bw_file_rd $i open2close $FILE
 	done
 	echo "" 1>&2
 fi	
@@ -356,14 +342,14 @@ then
 	echo "Mmap read bandwidth" 1>&2
 	for i in $ALL
 	do
-		bw_mmap_rd -P $SYNC_MAX $i mmap_only $FILE
+		bw_mmap_rd $i mmap_only $FILE
 	done
 	echo "" 1>&2
 
 	echo "Mmap read open2close bandwidth" 1>&2
 	for i in $ALL
 	do
-		bw_mmap_rd -P $SYNC_MAX $i open2close $FILE
+		bw_mmap_rd $i open2close $FILE
 	done
 	echo "" 1>&2
 	rm -f $FILE
@@ -375,70 +361,70 @@ then
 	echo "libc bcopy unaligned" 1>&2
 	for i in $HALF
 	do
-		bw_mem -P $SYNC_MAX $i bcopy
+		bw_mem $i bcopy
 	done
 	echo "" 1>&2
 
 	echo "libc bcopy aligned" 1>&2
 	for i in $HALF
 	do
-		bw_mem -P $SYNC_MAX $i bcopy conflict
+		bw_mem $i bcopy conflict
 	done
 	echo "" 1>&2
 
 	echo "Memory bzero bandwidth" 1>&2
 	for i in $ALL
 	do
-		bw_mem -P $SYNC_MAX $i bzero
+		bw_mem $i bzero
 	done
 	echo "" 1>&2
 
 	echo "unrolled bcopy unaligned" 1>&2
 	for i in $HALF
 	do
-		bw_mem -P $SYNC_MAX $i fcp
+		bw_mem $i fcp
 	done
 	echo "" 1>&2
 
 	echo "unrolled partial bcopy unaligned" 1>&2
 	for i in $HALF
 	do
-		bw_mem -P $SYNC_MAX $i cp
+		bw_mem $i cp
 	done
 	echo "" 1>&2
 
 	echo "Memory read bandwidth" 1>&2
 	for i in $ALL
 	do
-		bw_mem -P $SYNC_MAX $i frd
+		bw_mem $i frd
 	done
 	echo "" 1>&2
 
 	echo "Memory partial read bandwidth" 1>&2
 	for i in $ALL
 	do
-		bw_mem -P $SYNC_MAX $i rd
+		bw_mem $i rd
 	done
 	echo "" 1>&2
 
 	echo "Memory write bandwidth" 1>&2
 	for i in $ALL
 	do
-		bw_mem -P $SYNC_MAX $i fwr
+		bw_mem $i fwr
 	done
 	echo "" 1>&2
 
 	echo "Memory partial write bandwidth" 1>&2
 	for i in $ALL
 	do
-		bw_mem -P $SYNC_MAX $i wr
+		bw_mem $i wr
 	done
 	echo "" 1>&2
 
 	echo "Memory partial read/write bandwidth" 1>&2
 	for i in $ALL
 	do
-		bw_mem -P $SYNC_MAX $i rdwr
+		bw_mem $i rdwr
 	done
 	echo "" 1>&2
 fi
@@ -458,55 +444,52 @@ then
 	echo "" 1>&2
 	for size in $CTX
 	do	
-		lat_ctx -P $SYNC_MAX -s $size $N
+		lat_ctx -s $size $N
 	done
 	echo "" 1>&2
 fi
 
 if [ X$BENCHMARK_HARDWARE = XYES -o X$BENCHMARK_MEM = XYES ]
 then
-	if [ $SYNC_MAX = 1 ]
+	echo Calculating effective TLB size >> ${OUTPUT}
+	echo Effective TLB size 1>&2
+	if [ X$LINE_SIZE = X ]
 	then
-		echo Calculating effective TLB size >> ${OUTPUT}
-		echo Effective TLB size 1>&2
-		if [ X$LINE_SIZE = X ]
-		then
-			tlb -M ${MB}M >> ${OUTPUT}
-		else 
-			tlb -L $LINE_SIZE -M ${MB}M >> ${OUTPUT}
-		fi
-		echo "" 1>&2
-
-		echo Calculating memory load parallelism >> ${OUTPUT}
-		echo "Memory load parallelism" 1>&2
-		if [ X$LINE_SIZE = X ]
-		then
-			par_mem -M ${MB}M
-		else
-			par_mem -L $LINE_SIZE -M ${MB}M
-		fi
-		echo "" 1>&2
+		tlb -M ${MB}M >> ${OUTPUT}
+	else 
+		tlb -L $LINE_SIZE -M ${MB}M >> ${OUTPUT}
 	fi
+	echo "" 1>&2
+
+	echo Calculating memory load parallelism >> ${OUTPUT}
+	echo "Memory load parallelism" 1>&2
+	if [ X$LINE_SIZE = X ]
+	then
+		par_mem -M ${MB}M
+	else
+		par_mem -L $LINE_SIZE -M ${MB}M
+	fi
+	echo "" 1>&2
 
 	echo Calculating McCalpin\'s STREAM benchmark >> ${OUTPUT}
 	echo McCalpin\'s STREAM benchmark 1>&2
-	stream -P $SYNC_MAX -M ${MB}M
-	stream -P $SYNC_MAX -v 2 -M ${MB}M
+	stream -M ${MB}M
+	stream -v 2 -M ${MB}M
 	echo "" 1>&2
 
 	echo Calculating memory load latency >> ${OUTPUT}
 	echo "Memory load latency" 1>&2
 	if [ X$FASTMEM = XYES ]
 	then
-		lat_mem_rd -P $SYNC_MAX $MB 128
+		lat_mem_rd $MB 128
 	else
-		lat_mem_rd -P $SYNC_MAX $MB 16 32 64 128 256 512 1024 
+		lat_mem_rd $MB 16 32 64 128 256 512 1024 
 	fi
 	echo "" 1>&2
 
 	echo "Calculating random load latency" >> ${OUTPUT}
 	echo "Random load latency" 1>&2
-	lat_mem_rd -t -P $SYNC_MAX $MB 16
+	lat_mem_rd -t $MB 16
 	echo "" 1>&2
 fi
 
