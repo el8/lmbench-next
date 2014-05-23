@@ -459,6 +459,8 @@ then
 		lat_mem_rd -P $SYNC_MAX $MB 16 32 64 128 256 512 1024 
 	fi
 	echo "" 1>&2
+
+	echo "Calculating random load latency" >> ${OUTPUT}
 	echo "Random load latency" 1>&2
 	lat_mem_rd -t -P $SYNC_MAX $MB 16
 	echo "" 1>&2
