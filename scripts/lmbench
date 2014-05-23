@@ -5,8 +5,13 @@
 # Hacked by Larry McVoy (lm@sun.com, lm@sgi.com, lm@bitmover.com).
 # Copyright (c) 1994 Larry McVoy.  GPLed software.
 #
-# Make sure we can find: ./cmd, df, and netstat
-PATH=.:${PATH}:/sbin:/usr/sbin
+
+# Get path to ourselve
+SCRIPT="`readlink -e $0`"
+SCRIPTPATH="`dirname $SCRIPT`"
+
+# Make sure we can find lmbench-commands, df, netstat, ifconfig
+PATH=.:${SCRIPTPATH}:${PATH}:/sbin:/usr/sbin
 export PATH
 
 if [ -f $1 ]
@@ -60,10 +65,6 @@ if [ X$FSDIR = X ]
 then
 	FSDIR=/usr/tmp/lat_fs
 fi
-
-# Get path to ourselve
-SCRIPT="`readlink -e $0`"
-SCRIPTPATH="`dirname $SCRIPT`"
 
 # Figure out as much stuff as we can about this system.
 # Sure would be nice if everyone had SGI's "hinv".
