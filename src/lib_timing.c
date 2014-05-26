@@ -802,6 +802,7 @@ benchmp_interval(void* _state)
 
 			/* Now wait for signal to exit */
 			rc = read(state->exit_signal, (void*)&c, sizeof(char));
+			if (rc < 0)
 				DIE_PERROR("read failed");
 			exit(0);
 		}
