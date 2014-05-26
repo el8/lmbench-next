@@ -20,6 +20,8 @@ trap 'rm -f ${BASE}$$.s ${BASE}$$.c ${BASE}$$.o ${BASE}$$; exit 1' 1 2 15
 
 LDLIBS=-lm
 
+CFLAGS="${CFLAGS} -O2"
+
 # check for HP-UX's ANSI compiler
 echo "main(int ac, char *av[]) { int i; }" > ${BASE}$$.c
 if ${CC} ${CFLAGS} -o ${BASE}$$ ${BASE}$$.c 1>${NULL} 2>${NULL}

@@ -1,38 +1,9 @@
 # Makefile for top level of lmbench
-# Possible things to $(MAKE):
-#
-# build		(default) go to the source directory and build the benchmark
-# results	go to the source directory and build and run the benchmark
-# rerun		run the benchmark again
-# see		see the results that came with this release
-#		Go to the results directory and read the Makefile.
-# doc.lpr	print the documentation
-# doc.x		preview the documentation (needs X, groff, pic, etc)
-# clean		go to the subdirs and $(MAKE) clean
-# get		$(MAKE) sure all files are checked out
-# shar		build a shippable shar archive
-
 SHELL=/bin/sh
 MAKE=make
 
 build: 
 	cd src && $(MAKE)
-
-results: FRC
-	cd src && $(MAKE) results
-
-rerun: 
-	cd src && $(MAKE) rerun
-
-see:
-	cd results && $(MAKE) summary >summary.out 2>summary.errs 
-	cd results && $(MAKE) percent >percent.out 2>percent.errs 
-
-doc.lpr:
-	cd doc && $(MAKE) PS && lpr *.PS
-
-doc.x:
-	cd doc && $(MAKE) x
 
 clobber clean: 
 	for i in doc src results; do (cd $$i && $(MAKE) clean);	done
@@ -44,19 +15,6 @@ info:
 		(cd $$i && info); \
 	done
 
-release: scripts/mkrelease
-	scripts/mkrelease
-
-scripts/mkrelease:
-	cd scripts && co mkrelease
-
-# XXX - . must be named lmbench for this to work
-shar:
-	$(MAKE) clean
-	co -q Makefile
-	$(MAKE) get
-	cd .. && \
-	find lmbench -type f -print  | egrep -v 'noship|RCS' > /tmp/FILES
-	cd .. && shar -S -a -n lmbench1.0 -L 50K < /tmp/FILES 
-
-FRC:
+help:
+	@echo 'lmbench		builds the benchmark suite for the current os/arch [default]'
+	@echo 'clean		cleans out sources and run configuration'
