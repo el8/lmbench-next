@@ -30,18 +30,22 @@
 #include "bench.h"
 #include <sched.h>
 
-typedef     enum {USLEEP, NANOSLEEP, SELECT, PSELECT, ITIMER} timer_e;
+typedef enum {
+	USLEEP,
+	NANOSLEEP,
+	SELECT,
+	PSELECT,
+	ITIMER,
+} timer_e;
 
-uint64          caught,
-                n;
-struct itimerval value;
+static uint64	caught, n;
+static struct	itimerval value;
 
 typedef struct _state {
-    unsigned long usecs;
+	unsigned long usecs;
 } state_t;
 
-void
-bench_usleep(iter_t iterations, void *cookie)
+static void bench_usleep(iter_t iterations, void *cookie)
 {
     state_t        *state = (state_t*)cookie;
 
@@ -50,8 +54,7 @@ bench_usleep(iter_t iterations, void *cookie)
     }
 }
 
-void
-bench_nanosleep(iter_t iterations, void *cookie)
+static void bench_nanosleep(iter_t iterations, void *cookie)
 {
     state_t        *state = (state_t*)cookie;
     struct timespec req;
@@ -68,8 +71,7 @@ bench_nanosleep(iter_t iterations, void *cookie)
     }
 }
 
-void
-bench_select(iter_t iterations, void *cookie)
+static void bench_select(iter_t iterations, void *cookie)
 {
     state_t        *state = (state_t*)cookie;
     struct timeval  tv;
@@ -82,8 +84,7 @@ bench_select(iter_t iterations, void *cookie)
 }
 
 #ifdef _POSIX_SELECT
-void
-bench_pselect(iter_t iterations, void *cookie)
+static void bench_pselect(iter_t iterations, void *cookie)
 {
     state_t        *state = (state_t*)cookie;
     struct timespec ts;
@@ -96,8 +97,7 @@ bench_pselect(iter_t iterations, void *cookie)
 }
 #endif /* _POSIX_SELECT */
 
-void
-interval(int x)
+static void interval(int x)
 {
     if (++caught == n) {
 	caught = 0;
@@ -107,8 +107,7 @@ interval(int x)
     setitimer(ITIMER_REAL, &value, NULL);
 }
 
-void
-initialize(iter_t iterations, void *cookie)
+static void initialize(iter_t iterations, void *cookie)
 {
     state_t        *state = (state_t*)cookie;
     struct sigaction sa;
@@ -126,8 +125,7 @@ initialize(iter_t iterations, void *cookie)
     sigaction(SIGALRM, &sa, 0);
 }
 
-void
-bench_itimer(iter_t iterations, void *cookie)
+static void bench_itimer(iter_t iterations, void *cookie)
 {
     n = iterations;
     caught = 0;
@@ -147,19 +145,23 @@ bench_itimer(iter_t iterations, void *cookie)
     }
 }
 
-int
-set_realtime()
+static int set_realtime()
 {
-    struct sched_param sp;
+	struct sched_param sp;
 
-    sp.sched_priority = sched_get_priority_max(SCHED_RR);
-    if (sched_setscheduler(0, SCHED_RR, &sp) >= 0) return TRUE;
-    perror("sched_setscheduler");
-    return FALSE;
+	sp.sched_priority = sched_get_priority_max(SCHED_RR);
+	if (sp.sched_priority < 0) {
+		perror("sched_get_priority_max failed");
+		return 0;
+	}
+	if (sched_setscheduler(0, SCHED_RR, &sp) < 0) {
+		perror("sched_setscheduler failed");
+		return 0;
+	}
+	return 1;
 }
 
-int
-main(int ac, char **av)
+int main(int ac, char **av)
 {
     int             realtime = 0;
     int		    parallel = 1;
