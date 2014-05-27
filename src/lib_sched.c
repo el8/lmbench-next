@@ -177,6 +177,7 @@ int handle_scheduler(int childno, int benchproc, int nbenchprocs)
 {
 	int	cpu = 0;
 	char*	sched = getenv("LMBENCH_SCHED");
+	struct sched_param sp;
 	
 	if (!sched || strcasecmp(sched, "DEFAULT") == 0) {
 		/* do nothing.  Allow scheduler to control placement */
@@ -224,5 +225,12 @@ int handle_scheduler(int childno, int benchproc, int nbenchprocs)
 		return 0;
 	}
 
+	/* optionally elevate prio */
+	sp.sched_priority = sched_get_priority_max(SCHED_RR);
+	if (sp.sched_priority < 0)
+		goto skip;
+	if (sched_setscheduler(0, SCHED_RR, &sp) < 0)
+		DIE_PERROR("RT failed");
+skip:
 	return sched_pin(cpu % sched_ncpus());
 }

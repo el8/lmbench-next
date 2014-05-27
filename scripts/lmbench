@@ -157,6 +157,12 @@ then
 	fi
 fi
 
+# To elevate to SCHED_RR we need to deal with cgroups
+if [ -e /proc/self/cgroup ]
+then
+	echo $$ > /sys/fs/cgroup/cpu/tasks
+fi
+
 #
 # B E N C H M A R K S
 #
