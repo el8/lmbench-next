@@ -148,7 +148,10 @@ init_loop(iter_t iterations, void *cookie)
 {
 	state_t *state = (state_t *) cookie;
 
-	if (iterations) return;
+	if (iterations)
+		return;
+
+	handle_scheduler(benchmp_childid(), 0, 0);
 
         state->buf = (TYPE *)valloc(state->nbytes);
 	state->buf2_orig = NULL;
