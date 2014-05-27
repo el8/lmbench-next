@@ -157,8 +157,6 @@ then
 	fi
 fi
 
-# TODO: set scheduling policy and prio and pin to CPU
-
 #
 # B E N C H M A R K S
 #

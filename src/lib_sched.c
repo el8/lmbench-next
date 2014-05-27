@@ -1,7 +1,5 @@
 #include "bench.h"
 
-/* #define _DEBUG */
-
 #if defined(HAVE_SYSMP)
 #include <sys/sysmp.h>
 #include <sys/sysinfo.h>
@@ -25,76 +23,23 @@
 #include <sched.h>
 #endif
 
-extern int custom(char* str, int cpu);
-extern int reverse_bits(int cpu);
-extern int sched_ncpus();
-extern int sched_pin(int cpu);
-
 /*
- * The interface used by benchmp.
- *
- * childno is the "logical" child id number.  
- *	In range [0, ..., parallel-1].
- * benchproc is the "logical" id within the benchmark process.  The
- *	benchmp-created process is logical ID zero, child processes
- *	created by the benchmark range from [1, ..., nbenchprocs].
- * nbenchprocs is the number of child processes that each benchmark
- * 	process will create.  Most benchmarks will leave this zero,
- *	but some such as the pipe() benchmarks will not.
+ * Return the number of processors in this host
  */
-int
-handle_scheduler(int childno, int benchproc, int nbenchprocs)
+static int sched_ncpus()
 {
-	int	cpu = 0;
-	char*	sched = getenv("LMBENCH_SCHED");
-	
-	if (!sched || strcasecmp(sched, "DEFAULT") == 0) {
-		/* do nothing.  Allow scheduler to control placement */
-		return 0;
-	} else if (strcasecmp(sched, "SINGLE") == 0) {
-		/* assign all processes to CPU 0 */
-		cpu = 0;
-	} else if (strcasecmp(sched, "BALANCED") == 0) {
-		/* assign each benchmark process to its own processor,
-		 * but child processes will share the CPU with the
-		 * parent.
-		 */
-		cpu = childno;
-	} else if (strcasecmp(sched, "BALANCED_SPREAD") == 0) {
-		/* 
-		 * assign each benchmark process to its own processor, 
-		 * logically as far away from neighboring IDs as 
-		 * possible.  This can help identify bus contention
-		 * issues in SMPs with hierarchical busses or NUMA
-		 * memory.
-		 */
-		cpu = reverse_bits(childno);
-	} else if (strcasecmp(sched, "UNIQUE") == 0) {
-		/*
-		 * assign each benchmark process and each child process
-		 * to its own processor.
-		 */
-		cpu = childno * (nbenchprocs + 1) + benchproc;
-	} else if (strcasecmp(sched, "UNIQUE_SPREAD") == 0) {
-		/* 
-		 * assign each benchmark process and each child process
-		 * to its own processor, logically as far away from 
-		 * neighboring IDs as possible.  This can help identify 
-		 * bus contention issues in SMPs with hierarchical busses
-		 * or NUMA memory.
-		 */
-		cpu = reverse_bits(childno * (nbenchprocs + 1) + benchproc);
-	} else if (strncasecmp(sched, "CUSTOM ", strlen("CUSTOM ")) == 0) {
-		cpu = custom(sched + strlen("CUSTOM"), childno);
-	} else if (strncasecmp(sched, "CUSTOM_SPREAD ", strlen("CUSTOM_SPREAD ")) == 0) {
-		cpu = custom(sched + strlen("CUSTOM_SPREAD"), 
-			     childno * (nbenchprocs + 1) + benchproc);
-	} else {
-		/* default action: do nothing */
-		return 0;
-	}
-
-	return sched_pin(cpu % sched_ncpus());
+#ifdef MP_NPROCS
+	/* SGI IRIX interface */
+	return sysmp(MP_NPROCS);
+#elif defined(HAVE_MPCTL)
+	/* HP-UX interface */
+	return mpctl(MPC_GETNUMSPUS_SYS, 0, 0);
+#elif defined(_SC_NPROCESSORS_ONLN)
+	/* AIX, Solaris, and Linux interface */
+	return sysconf(_SC_NPROCESSORS_ONLN);
+#else
+	return 1;
+#endif
 }
 
 /*
@@ -103,8 +48,7 @@ handle_scheduler(int childno, int benchproc, int nbenchprocs)
  *
  * XXX: probably doesn't work for NCPUS not a power of two.
  */
-int
-reverse_bits(int cpu)
+static int reverse_bits(int cpu)
 {
 	int	i;
 	int	nbits;
@@ -124,8 +68,7 @@ reverse_bits(int cpu)
 /*
  * Custom is a user-defined sequence of CPU ids
  */
-int
-custom(char* str, int cpu)
+static int custom(char* str, int cpu)
 {
 	static int nvalues = -1;
 	static int* values = NULL;
@@ -150,33 +93,12 @@ custom(char* str, int cpu)
 }
 
 /*
- * Return the number of processors in this host
- */
-int
-sched_ncpus()
-{
-#ifdef MP_NPROCS
-	/* SGI IRIX interface */
-	return sysmp(MP_NPROCS);
-#elif defined(HAVE_MPCTL)
-	/* HP-UX interface */
-	return mpctl(MPC_GETNUMSPUS_SYS, 0, 0);
-#elif defined(_SC_NPROCESSORS_ONLN)
-	/* AIX, Solaris, and Linux interface */
-	return sysconf(_SC_NPROCESSORS_ONLN);
-#else
-	return 1;
-#endif
-}
-
-/*
  * Pin the current process to the given CPU
  *
  * return 0 when successful
  * returns -1 on error
  */
-int
-sched_pin(int cpu)
+int sched_pin(int cpu)
 {
 	int retval = -1;
 
@@ -237,4 +159,70 @@ sched_pin(int cpu)
 
 #endif
 	return retval;
+}
+
+/*
+ * The interface used by benchmp.
+ *
+ * childno is the "logical" child id number.  
+ *	In range [0, ..., parallel-1].
+ * benchproc is the "logical" id within the benchmark process.  The
+ *	benchmp-created process is logical ID zero, child processes
+ *	created by the benchmark range from [1, ..., nbenchprocs].
+ * nbenchprocs is the number of child processes that each benchmark
+ * 	process will create.  Most benchmarks will leave this zero,
+ *	but some such as the pipe() benchmarks will not.
+ */
+int handle_scheduler(int childno, int benchproc, int nbenchprocs)
+{
+	int	cpu = 0;
+	char*	sched = getenv("LMBENCH_SCHED");
+	
+	if (!sched || strcasecmp(sched, "DEFAULT") == 0) {
+		/* do nothing.  Allow scheduler to control placement */
+		return 0;
+	} else if (strcasecmp(sched, "SINGLE") == 0) {
+		/* assign all processes to CPU 0 */
+		cpu = 0;
+	} else if (strcasecmp(sched, "BALANCED") == 0) {
+		/* assign each benchmark process to its own processor,
+		 * but child processes will share the CPU with the
+		 * parent.
+		 */
+		cpu = childno;
+	} else if (strcasecmp(sched, "BALANCED_SPREAD") == 0) {
+		/* 
+		 * assign each benchmark process to its own processor, 
+		 * logically as far away from neighboring IDs as 
+		 * possible.  This can help identify bus contention
+		 * issues in SMPs with hierarchical busses or NUMA
+		 * memory.
+		 */
+		cpu = reverse_bits(childno);
+	} else if (strcasecmp(sched, "UNIQUE") == 0) {
+		/*
+		 * assign each benchmark process and each child process
+		 * to its own processor.
+		 */
+		cpu = childno * (nbenchprocs + 1) + benchproc;
+	} else if (strcasecmp(sched, "UNIQUE_SPREAD") == 0) {
+		/* 
+		 * assign each benchmark process and each child process
+		 * to its own processor, logically as far away from 
+		 * neighboring IDs as possible.  This can help identify 
+		 * bus contention issues in SMPs with hierarchical busses
+		 * or NUMA memory.
+		 */
+		cpu = reverse_bits(childno * (nbenchprocs + 1) + benchproc);
+	} else if (strncasecmp(sched, "CUSTOM ", strlen("CUSTOM ")) == 0) {
+		cpu = custom(sched + strlen("CUSTOM"), childno);
+	} else if (strncasecmp(sched, "CUSTOM_SPREAD ", strlen("CUSTOM_SPREAD ")) == 0) {
+		cpu = custom(sched + strlen("CUSTOM_SPREAD"), 
+			     childno * (nbenchprocs + 1) + benchproc);
+	} else {
+		/* default action: do nothing */
+		return 0;
+	}
+
+	return sched_pin(cpu % sched_ncpus());
 }
