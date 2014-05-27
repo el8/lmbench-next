@@ -229,8 +229,7 @@ int handle_scheduler(int childno, int benchproc, int nbenchprocs)
 	sp.sched_priority = sched_get_priority_max(SCHED_RR);
 	if (sp.sched_priority < 0)
 		goto skip;
-	if (sched_setscheduler(0, SCHED_RR, &sp) < 0)
-		DIE_PERROR("RT failed");
+	sched_setscheduler(0, SCHED_RR, &sp);
 skip:
 	return sched_pin(cpu % sched_ncpus());
 }
