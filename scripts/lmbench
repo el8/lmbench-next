@@ -158,7 +158,8 @@ then
 fi
 
 # To elevate to SCHED_RR we need to deal with cgroups
-if [ -e /proc/self/cgroup ]
+CGROUPS=`grep '^cgroup' /proc/mounts`
+if [ -n "$CGROUPS" ]
 then
 	echo $$ > /sys/fs/cgroup/cpu/tasks
 fi
