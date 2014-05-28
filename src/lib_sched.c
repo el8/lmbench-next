@@ -175,10 +175,11 @@ int sched_pin(int cpu)
  */
 int handle_scheduler(int childno, int benchproc, int nbenchprocs)
 {
-	int	cpu = 0;
-	char*	sched = getenv("LMBENCH_SCHED");
 	struct sched_param sp;
-	
+	char *rt, *sched;
+	int cpu = 0;
+
+	sched = getenv("LMBENCH_SCHED");
 	if (!sched || strcasecmp(sched, "DEFAULT") == 0) {
 		/* do nothing.  Allow scheduler to control placement */
 		return 0;
@@ -225,7 +226,11 @@ int handle_scheduler(int childno, int benchproc, int nbenchprocs)
 		return 0;
 	}
 
-	/* optionally elevate prio */
+	/* optionally elevate prio to max SCHED_RR */
+	rt = getenv("REALTIME");
+	if (!rt || strcasecmp(rt, "YES") != 0)
+		goto skip;
+
 	sp.sched_priority = sched_get_priority_max(SCHED_RR);
 	if (sp.sched_priority < 0)
 		goto skip;
