@@ -459,9 +459,9 @@ main(int ac, char **av)
 		0, 1, warmup, repetitions, &state);
 #ifndef __GNUC__
 	settime(gettime() - (get_n() * 100000 * iop_time) / iop_N);
-	nano("uint64 add", get_n() * 100000);
+	nano("int64 add", get_n() * 100000);
 #else
-	nano("uint64 add", get_n() * 10000 * 2);
+	nano("int64 add", get_n() * 10000 * 2);
 #endif
 	
 	benchmp(NULL, do_int64_mul, NULL, 
