@@ -172,8 +172,9 @@ fi
 # didn't list *everything* here
 if [ X$BENCHMARK_SYSCALL = XYES -o X$BENCHMARK_OPS = XYES ]
 then
-	echo "\nCalculating latency measurements" >> ${OUTPUT}
-	echo "\nLatency measurements" 1>&2
+	echo "Calculating latency measurements" >> ${OUTPUT}
+	echo "" 1>&2
+	echo "Latency measurements" 1>&2
 fi
 
 if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_SYSCALL = XYES ]
