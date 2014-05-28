@@ -63,6 +63,8 @@ main(int ac, char **av)
         len = atoi(av[optind]);
 	len *= 1024 * 1024;
 
+	handle_scheduler(benchmp_childid(), 0, 0);
+
 	if (optind == ac - 1) {
 		fprintf(stderr, "stride=%d\n", (int)STRIDE);
 		for (range = LOWER; range <= len; range = step(range)) {

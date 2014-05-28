@@ -179,6 +179,9 @@ main(int ac, char **av)
 	for (i = 1; i < ac; ++i) {
 		chkarg(av[i]);
 	}
+
+	handle_scheduler(benchmp_childid(), 0, 0);
+
 	signal(SIGINT, done);
 	signal(SIGALRM, done);
 	misses = mismatch = getarg("mismatch=", ac, av);

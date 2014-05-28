@@ -124,7 +124,9 @@ main(int ac, char **av)
 	if (optind != ac - 1 && optind != ac - 2 ) {
 		lmbench_usage(ac, av, usage);
 	}
-	
+
+	handle_scheduler(benchmp_childid(), 0, 0);
+
 	state.file = FNAME;
 	if (optind == ac - 2) 
 		state.file = av[optind + 1];

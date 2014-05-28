@@ -36,6 +36,8 @@ int main(int ac, char **av)
 	char	*usage = "-s\n OR [-P <parallelism>] [-W <warmup>] [-N <repetitions>]\n OR -S\n";
 	int rc, c;
 
+	handle_scheduler(benchmp_childid(), 0, 0);
+
 	/* Start the server "-s" or Shut down the server "-S" */
 	if (ac == 2) {
 		if (!strcmp(av[1], "-s")) {

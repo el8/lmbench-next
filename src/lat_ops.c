@@ -418,6 +418,8 @@ main(int ac, char **av)
 		}
 	}
 
+	handle_scheduler(benchmp_childid(), 0, 0);
+
 	benchmp(NULL, do_integer_bitwise, NULL, 
 		0, 1, warmup, repetitions, &state);
 	nano("integer bit", get_n() * 100 * 3);

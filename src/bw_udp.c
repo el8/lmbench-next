@@ -49,13 +49,14 @@ main(int ac, char **av)
 	state.msize = 0;
 	state.move = 10*1024*1024;
 
+	handle_scheduler(benchmp_childid(), 0, 1);
+
 	/* Rest is client argument processing */
 	while (( c = getopt(ac, av, "sS:m:W:N:")) != EOF) {
 		switch(c) {
 		case 's': /* Server */
-			if (fork() == 0) {
+			if (fork() == 0)
 				server_main();
-			}
 			exit(0);
 		case 'S': /* shutdown serverhost */
 		{

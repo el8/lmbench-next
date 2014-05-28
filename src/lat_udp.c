@@ -49,6 +49,7 @@ main(int ac, char **av)
 		return(1);
 	}
 
+	handle_scheduler(benchmp_childid(), 0, 0);
 	while (( c = getopt(ac, av, "sS:m:P:W:N:")) != EOF) {
 		switch(c) {
 		case 's': /* Server */

@@ -79,6 +79,8 @@ main(int ac, char **av)
 		lmbench_usage(ac, av, usage);
 	}
 
+	handle_scheduler(benchmp_childid(), 0, 0);
+
 	nbytes = state.nbytes = bytes(av[optind]);
 	strcpy(state.filename,av[optind+2]);
 	CHK(stat(state.filename, &sbuf));
@@ -106,7 +108,8 @@ initialize(iter_t iterations, void* cookie)
 {
 	state_t	*state = (state_t *) cookie;
 
-	if (iterations) return;
+	if (iterations)
+		return;
 
 	state->fd = -1;
 	state->buf = NULL;

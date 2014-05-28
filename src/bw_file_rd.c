@@ -53,7 +53,8 @@ initialize(iter_t iterations, void* cookie)
 {
 	state_t	*state = (state_t *) cookie;
 
-	if (iterations) return;
+	if (iterations)
+		return;
 
 	state->fd = -1;
 	if (state->clone) {
@@ -163,6 +164,8 @@ main(int ac, char **av)
 	if (optind + 3 != ac) { /* should have three arguments left */
 		lmbench_usage(ac, av, usage);
 	}
+
+	handle_scheduler(benchmp_childid(), 0, 0);
 
 	strcpy(state.filename,av[optind+2]);
 	count = bytes(av[optind]);

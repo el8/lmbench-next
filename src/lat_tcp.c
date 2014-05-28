@@ -40,6 +40,7 @@ main(int ac, char **av)
 
 	state.msize = 1;
 
+	handle_scheduler(benchmp_childid(), 0, 0);
 	while (( c = getopt(ac, av, "sS:m:P:W:N:")) != EOF) {
 		switch(c) {
 		case 's': /* Server */
@@ -142,6 +143,7 @@ server_main()
 	GO_AWAY;
 	signal(SIGCHLD, sigchld_wait_handler);
 	sock = tcp_server(TCP_XACT, SOCKOPT_REUSE);
+
 	for (;;) {
 		newsock = tcp_accept(sock, SOCKOPT_NONE);
 		switch (fork()) {

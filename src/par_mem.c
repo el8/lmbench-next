@@ -59,6 +59,8 @@ main(int ac, char **av)
 		}
 	}
 
+	handle_scheduler(benchmp_childid(), 0, 0);
+
 	for (i = MAX_MEM_PARALLELISM * state.line; i <= maxlen; i<<=1) { 
 		par = par_mem(i, warmup, repetitions, &state);
 

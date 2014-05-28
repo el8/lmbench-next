@@ -192,6 +192,8 @@ main(int ac, char **av)
 		lmbench_usage(ac, av, usage);
 	}
 
+	handle_scheduler(benchmp_childid(), 0, 0);
+
 	if (!strcmp("install", av[optind])) {
 		benchmp(NULL, do_install, NULL, 0, parallel, 
 			warmup, repetitions, NULL);

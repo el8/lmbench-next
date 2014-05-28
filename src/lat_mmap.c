@@ -73,6 +73,8 @@ main(int ac, char **av)
 		lmbench_usage(ac, av, usage);
 	}
 
+	handle_scheduler(benchmp_childid(), 0, 0);
+
 	state.size = bytes(av[optind]);
 	if (state.size < MINSIZE) {
 		return (1);

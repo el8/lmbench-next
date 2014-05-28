@@ -72,6 +72,8 @@ main(int ac, char **av)
 		lmbench_usage(ac, av, usage);
 	}
 
+	handle_scheduler(benchmp_childid(), 0, 0);
+
 	state.server = av[optind];
 	benchmp(NULL, doclient, NULL, 0, 1, warmup, repetitions, &state);
 

@@ -396,6 +396,8 @@ main(int ac, char **av)
 		}
 	}
 
+	handle_scheduler(benchmp_childid(), 0, 0);
+
 	par = max_parallelism(integer_bit_benchmarks, 
 			      warmup, repetitions, &state);
 	if (par > 0.)

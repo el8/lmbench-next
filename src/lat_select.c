@@ -68,6 +68,7 @@ main(int ac, char **av)
 	if (optind + 1 != ac) {
 		lmbench_usage(ac, av, usage);
 	}
+	handle_scheduler(benchmp_childid(), 0, 0);
 
 	if (streq("tcp", av[optind])) {
 		state.fid_f = open_socket;

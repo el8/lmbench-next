@@ -90,6 +90,8 @@ main(int ac, char **av)
 		lmbench_usage(ac, av, usage);
 	}
 
+	handle_scheduler(benchmp_childid(), 0, 0);
+
 	state.server = av[optind++];
 
 	if (state.msize == 0 && state.move == 0) {
@@ -126,7 +128,8 @@ initialize(iter_t iterations, void *cookie)
 	char	buf[100];
 	state_t *state = (state_t *) cookie;
 
-	if (iterations) return;
+	if (iterations)
+		return;
 
 	state->buf = valloc(state->msize);
 	if (!state->buf) {

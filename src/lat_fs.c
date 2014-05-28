@@ -64,6 +64,9 @@ main(int ac, char **av)
 	if (optind < ac - 1) {
 		lmbench_usage(ac, av, usage);
 	}
+
+	handle_scheduler(benchmp_childid(), 0, 0);
+
 	if (optind == ac - 1) {
 		state.tmpdir = av[1];
 	}

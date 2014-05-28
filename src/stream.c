@@ -85,6 +85,8 @@ main(int ac, char **av)
 		}
 	}
 
+	handle_scheduler(benchmp_childid(), 0, 0);
+
 	/* ensure that we can malloc the desired space */
 	while (!(p = malloc(state.len)))
 		state.len /= 2;
