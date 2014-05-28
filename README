@@ -1,7 +1,14 @@
-README for lmbench 2alpha8 net release.
+Major changes compared to version 3.0-a9:
+* Refine cross-compile support
+* Remove dependency on make on the target
+* Support WARMUPS, REPETITIONS parameters from lmbench script
+* Allow realtime scheduler and CPU pinning for most test cases
+* Set default optimization to -O2
+* Removed hand-written HTTP 1.0 server and rhttp tests
+* Removed MP/SYNC_MAX from default script
+* Fixed bugs
 
 To run the benchmark, you should be able to say:
-
 	cd src
 	make results
 
