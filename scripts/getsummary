@@ -1,3 +1,4 @@
+#!/usr/bin/perl -w 
 
 # Generate an ascii summary from lmbench result files.
 # Usage: getsummary file file file...
@@ -440,13 +441,28 @@ foreach $file (@ARGV) {
 	$n++;
 }
 
-print<<EOF;
 
-                 L M B E N C H  3 . 0   S U M M A R Y
-                 ------------------------------------
-		 (Alpha software, do not distribute)
+use Cwd 'abs_path';
+my $scriptpath = abs_path($0);
 
-EOF
+my ($maj, $min) = { 0, 0 };
+
+my $file = substr($scriptpath, 0, rindex($scriptpath, "/"))."/../VERSION";
+open(VERSION, "<$file") || die "can't find $file";
+while (<VERSION>) {
+	if (/MAJOR/) {
+		$maj = substr($_, index($_, "=") + 1);
+		$maj =~ s/^\s+|\s+$//g;
+	}
+	if (/MINOR/) {
+		$min = substr($_, index($_, "=") + 1);
+		$min =~ s/^\s+|\s+$//g;
+	}
+}
+close(VERSION);
+
+print "\n                 L M B E N C H  $maj . $min   S U M M A R Y\n";
+print "                 ------------------------------------\n\n";
 
 &print_basic;
 &print_process;
@@ -473,18 +489,18 @@ sub print_basic
 	}
 	print<<EOF;
 Basic system parameters
-------------------------------------------------------------------------------
-Host                 OS Description              Mhz  tlb  cache  mem   scal
-                                                     pages line   par   load
-                                                           bytes  
---------- ------------- ----------------------- ---- ----- ----- ------ ----
+----------------------------------------------------------------------------------------
+Host            OS                   Description             Mhz  tlb   cache  mem   scal
+                                                                  pages line   par   load
+                                                                        bytes  
+--------------- -------------------- ----------------------- ---- ----- ----- ------ ----
 EOF
 
 	for ($i = 0; $i <= $#uname; $i++) {
 		if (&resultsq($i, $i, ( 'tlb', 'line_size', 'mem_load_par' )) <= 0) {
 			next; 
 		}
-	        printf "%-9.9s %13.13s %23.23s ", 
+	        printf "%-15.15s %-20.20s %-23.23s ", 
 			$host[$i], &getos($uname[$i]), $file[$i];
 		printf "%4.4s %5.5s %5.5s %6.6s %4.4s\n",
 			&inum($misc_mhz[$i], 4),
