@@ -121,7 +121,6 @@ echo FSDIR=$FSDIR >> $C
 echo INFO=$INFO >> $C
 echo LINE_SIZE=$LINE_SIZE >> $C
 echo LOOP_O=$LOOP_O >> $C
-echo MAIL=$MAIL >> $C
 echo TOTAL_MEM=$TOTAL_MEM >> $C
 echo MB=$MB >> $C
 echo MHZ=\"$MHZ\" >> $C

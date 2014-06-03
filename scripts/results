@@ -1,7 +1,5 @@
 #!/bin/sh
 
-# $Id$
-
 OS=`../scripts/os`
 CONFIG=`../scripts/config`
 RESULTS=results/$OS
@@ -29,11 +27,4 @@ export SYNC_MAX
 export OUTPUT
 lmbench $CONFIG 2>../${RESULTS}
 
-if [ X$MAIL = Xyes ]
-then	echo Mailing results
-	(echo ---- $INFO ---
-	cat $INFO 
-	echo ---- $RESULTS ---
-	cat ../$RESULTS) | mail lmbench3@bitmover.com 
-fi
 exit 0

@@ -202,20 +202,6 @@ foreach $file (@ARGV) {
 			@_ = split;
 			push(@lat_tcp_remote, $_[4]);
 		}
-		if (/RPC.udp latency using localhost:/) {
-			@_ = split;
-			push(@lat_rpc_udp_local, $_[4]);
-		} elsif (/RPC.udp latency using/) {
-			@_ = split;
-			push(@lat_rpc_udp_remote, $_[4]);
-		}
-		if (/RPC.tcp latency using localhost:/) {
-			@_ = split;
-			push(@lat_rpc_tcp_local, $_[4]);
-		} elsif (/RPC.tcp latency using/) {
-			@_ = split;
-			push(@lat_rpc_tcp_remote, $_[4]);
-		}
 		if (/TCP.IP connection cost to localhost:/) {
 			@_ = split;
 			push(@lat_tcp_connect_local, $_[5]);
@@ -416,9 +402,8 @@ foreach $file (@ARGV) {
 		'lat_l1', 'lat_l2', 'lat_mappings', 'lat_mem', 
 		'lat_mem_rand', 'lat_nullproc',
 		'lat_openclose', 'lat_pagefault', 'lat_pipe',
-		'lat_protfault', 'lat_read', 'lat_rpc_tcp_local', 
-		'lat_rpc_tcp_remote', 'lat_rpc_udp_local', 
-		'lat_rpc_udp_remote', 'lat_fd_select', 'lat_tcp_select',
+		'lat_protfault', 'lat_read', 
+		'lat_fd_select', 'lat_tcp_select',
 		'lat_shproc', 'lat_sigcatch', 'lat_siginstall', 
 		'lat_simpleproc', 'lat_stat', 'lat_syscall', 
 		'lat_tcp_connect_local', 'lat_tcp_connect_remote', 
@@ -472,7 +457,6 @@ print "                 ------------------------------------\n\n";
 &print_double;
 &print_ctx;
 &print_ipc_local;
-&print_ipc_remote;
 &print_file_vm;
 &print_bw_ipc_local;
 &print_mem;
@@ -489,7 +473,7 @@ sub print_basic
 	}
 	print<<EOF;
 Basic system parameters
-----------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------
 Host            OS                   Description             Mhz  tlb   cache  mem   scal
                                                                   pages line   par   load
                                                                         bytes  
@@ -526,10 +510,10 @@ sub print_process
 	print<<EOF;
 
 Processor, Processes - times in microseconds - smaller is better
-------------------------------------------------------------------------------
-Host                 OS  Mhz null null      open slct sig  sig  fork exec sh  
-                             call  I/O stat clos TCP  inst hndl proc proc proc
---------- ------------- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+----------------------------------------------------------------
+ null null      open slct sig  sig  fork exec sh  
+ call I/O  stat clos TCP  inst hndl proc proc proc
+ ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 EOF
 
 	@fs_delete_4k = @lat_ctx0_8 = @bw_file = @lat_ctx0_16 = @fs_delete_1k =
@@ -550,9 +534,7 @@ EOF
 		} else {
 			$tmp = ($lat_read[$i] + $lat_write[$i]) / 2;
 		}
-	        printf "%-9.9s %13.13s ", $host[$i], &getos($uname[$i]);
-		printf "%4.0f %4.4s %4.4s %4.4s %4.4s %4.4s %4.4s %4.4s %4.4s %4.4s %4.4s\n",
-			$misc_mhz[$i],
+		printf " %4.4s %4.4s %4.4s %4.4s %4.4s %4.4s %4.4s %4.4s %4.4s %4.4s\n",
 			&num($lat_syscall[$i], 4),
 			&num($tmp, 4),
 			&num($lat_stat[$i], 4),
@@ -580,9 +562,9 @@ sub print_int
 
 Basic integer operations - times in nanoseconds - smaller is better
 -------------------------------------------------------------------
-Host                 OS  intgr intgr  intgr  intgr  intgr  
-                          bit   add    mul    div    mod   
---------- ------------- ------ ------ ------ ------ ------ 
+ intgr intgr  intgr  intgr  intgr  
+  bit   add    mul    div    mod   
+ ----- ------ ------ ------ ------ 
 EOF
 
 	for ($i = 0; $i <= $#uname; $i++) {
@@ -594,8 +576,7 @@ EOF
 		if ($load[$i] > 1) {
 			next;
 		}
-		printf "%-9.9s %13.13s ", $host[$i], &getos($uname[$i]);
-		printf "%6.6s %6.6s %6.6s %6.6s %6.6s\n",
+		printf " %6.6s %6.6s %6.6s %6.6s %6.6s\n",
 			&scale_num($integer_bit[$i], 6, $load[$i]),
 			&scale_num($integer_add[$i], 6, $load[$i]),
 			&scale_num($integer_mul[$i], 6, $load[$i]),
@@ -618,9 +599,9 @@ sub print_uint64
 
 Basic uint64 operations - times in nanoseconds - smaller is better
 ------------------------------------------------------------------
-Host                 OS int64  int64  int64  int64  int64  
-                         bit    add    mul    div    mod   
---------- ------------- ------ ------ ------ ------ ------ 
+ int64  int64  int64  int64  int64  
+  bit    add    mul    div    mod   
+ ------ ------ ------ ------ ------ 
 EOF
 
 	for ($i = 0; $i <= $#uname; $i++) {
@@ -632,7 +613,6 @@ EOF
 		if ($load[$i] > 1) {
 			next;
 		}
-        	printf "%-9.9s %13.13s ", $host[$i], &getos($uname[$i]);
 		printf " %5.5s %6.6s %6.6s %6.6s %6.6s\n",
 			&scale_num($int64_bit[$i], 6, $load[$i]),
 			&scale_num($int64_add[$i], 6, $load[$i]),
@@ -655,9 +635,9 @@ sub print_float
 
 Basic float operations - times in nanoseconds - smaller is better
 -----------------------------------------------------------------
-Host                 OS  float  float  float  float
-                         add    mul    div    bogo
---------- ------------- ------ ------ ------ ------ 
+ float  float  float  float
+ add    mul    div    bogo
+ ----- ------ ------ ------
 EOF
 
 	for ($i = 0; $i <= $#uname; $i++) {
@@ -669,8 +649,7 @@ EOF
 		if ($load[$i] > 1) {
 			next;
 		}
-	        printf "%-9.9s %13.13s ", $host[$i], &getos($uname[$i]);
-		printf "%6.6s %6.6s %6.6s %6.6s\n",
+		printf " %6.6s %6.6s %6.6s %6.6s\n",
 			&scale_num($float_add[$i], 6, $load[$i]),
 			&scale_num($float_mul[$i], 6, $load[$i]),
 			&scale_num($float_div[$i], 6, $load[$i]),
@@ -691,9 +670,9 @@ sub print_double
 
 Basic double operations - times in nanoseconds - smaller is better
 ------------------------------------------------------------------
-Host                 OS  double double double double
-                         add    mul    div    bogo
---------- ------------- ------  ------ ------ ------ 
+ double double double double
+ add    mul    div    bogo
+ ------ ------ ------ ------ 
 EOF
 
 	for ($i = 0; $i <= $#uname; $i++) {
@@ -705,8 +684,7 @@ EOF
 		if ($load[$i] > 1) {
 			next;
 		}
-	        printf "%-9.9s %13.13s ", $host[$i], &getos($uname[$i]);
-		printf "%6.6s %6.6s %6.6s %6.6s\n",
+		printf " %6.6s %6.6s %6.6s %6.6s\n",
 			&scale_num($double_add[$i], 6, $load[$i]),
 			&scale_num($double_mul[$i], 6, $load[$i]),
 			&scale_num($double_div[$i], 6, $load[$i]),
@@ -728,10 +706,10 @@ sub print_ctx
 	print<<EOF;
 
 Context switching - times in microseconds - smaller is better
--------------------------------------------------------------------------
-Host                 OS  2p/0K 2p/16K 2p/64K 8p/16K 8p/64K 16p/16K 16p/64K
-                         ctxsw  ctxsw  ctxsw ctxsw  ctxsw   ctxsw   ctxsw
---------- ------------- ------ ------ ------ ------ ------ ------- -------
+-------------------------------------------------------------
+ 2p/0K 2p/16K 2p/64K 8p/16K 8p/64K 16p/16K 16p/64K
+ ctxsw  ctxsw  ctxsw ctxsw  ctxsw   ctxsw   ctxsw
+ ----- ------ ------ ------ ------ ------- -------
 EOF
 
 	for ($i = 0; $i <= $#uname; $i++) {
@@ -741,7 +719,6 @@ EOF
 				'lat_ctx64_16' )) <= 0) { 
 			next; 
 		}
-	        printf "%-9.9s %13.13s ", $host[$i], &getos($uname[$i]);
 		printf "%6.6s %6.6s %6.6s %6.6s %6.6s %7.7s %7.7s\n",
 			&num($lat_ctx0_2[$i], 6),
 			&num($lat_ctx16_2[$i], 6),
@@ -760,75 +737,32 @@ sub print_ipc_local
 	
 	if (&resultsq(0, $#uname, ( 'lat_ctx0_2', 'lat_pipe', 
 				'lat_unix', 'lat_udp_local',
-				'lat_rpc_udp_local', 'lat_tcp_local',
-				'lat_rpc_tcp_local', 
+				'lat_tcp_local',
 				'lat_tcp_connect_local' )) <= 0) { 
 		return; 
 	}
 	print<<EOF;
 
-*Local* Communication latencies in microseconds - smaller is better
----------------------------------------------------------------------
-Host                 OS 2p/0K  Pipe AF     UDP  RPC/   TCP  RPC/ TCP
-                        ctxsw       UNIX         UDP         TCP conn
---------- ------------- ----- ----- ---- ----- ----- ----- ----- ----
+Local communication latencies in microseconds - smaller is better
+-----------------------------------------------------------------
+ 2p/0K  Pipe AF    UDP   TCP  TCP
+ ctxsw       UNIX             conn
+ -----  ---- ---- ----- ----- ----
 EOF
 
 	for ($i = 0; $i <= $#uname; $i++) {
 		if (&resultsq($i, $i, ( 'lat_ctx0_2', 'lat_pipe', 
 				'lat_unix', 'lat_udp_local',
-				'lat_rpc_udp_local', 'lat_tcp_local',
-				'lat_rpc_tcp_local', 
-				'lat_tcp_connect_local' )) <= 0) { 
+				'lat_tcp_local', 'lat_tcp_connect_local' )) <= 0) { 
 			next; 
 		}
-	        printf "%-9.9s %13.13s ", $host[$i], &getos($uname[$i]);
-        	printf "%5.5s %5.5s %4.4s %5.5s %5.5s %5.5s %5.5s %4.4s\n",
+        	printf " %5.5s %5.5s %4.4s %5.5s %5.5s %4.4s\n",
 			&num($lat_ctx0_2[$i], 5),
 			&num($lat_pipe[$i], 5),
 			&num($lat_unix[$i], 4),
 			&num($lat_udp_local[$i], 5),
-			&num($lat_rpc_udp_local[$i], 5),
 			&num($lat_tcp_local[$i], 5),
-			&num($lat_rpc_tcp_local[$i], 5),
 			&scale_num($lat_tcp_connect_local[$i], 5, $load[$i]);
-	}
-}
-
-sub print_ipc_remote
-{
-	local($i);
-	local($t);
-	
-	if (&resultsq(0, $#uname, ( 'lat_udp_remote', 
-				'lat_rpc_udp_remote', 'lat_tcp_remote', 
-				'lat_rpc_tcp_remote', 
-				'lat_tcp_connect_remote' )) <= 0) { 
-		return; 
-	}
-	print<<EOF;
-
-*Remote* Communication latencies in microseconds - smaller is better
----------------------------------------------------------------------
-Host                 OS   UDP  RPC/  TCP   RPC/ TCP
-                               UDP         TCP  conn
---------- ------------- ----- ----- ----- ----- ----
-EOF
-
-	for ($i = 0; $i <= $#uname; $i++) {
-		if (&resultsq($i, $i, ( 'lat_udp_remote', 
-				'lat_rpc_udp_remote', 'lat_tcp_remote', 
-				'lat_rpc_tcp_remote', 
-				'lat_tcp_connect_remote' )) <= 0) { 
-			next; 
-		}
-	        printf "%-9.9s %13.13s ", $host[$i], &getos($uname[$i]);
-	        printf "%5.5s %5.5s %5.5s %5.5s %4.4s\n",
-			&num($lat_udp_remote[$i], 5),
-			&num($lat_rpc_udp_remote[$i], 5),
-			&num($lat_tcp_remote[$i], 5),
-			&num($lat_rpc_tcp_remote[$i], 5),
-			&scale_num($lat_tcp_connect_remote[$i], 4, $load[$i]);
 	}
 }
 
@@ -846,10 +780,10 @@ sub print_file_vm
 	print<<EOF;
 
 File & VM system latencies in microseconds - smaller is better
--------------------------------------------------------------------------------
-Host                 OS   0K File      10K File     Mmap    Prot   Page   100fd
-                        Create Delete Create Delete Latency Fault  Fault  selct
---------- ------------- ------ ------ ------ ------ ------- ----- ------- -----
+--------------------------------------------------------------
+ 0K     File   10K    File   Mmap    Prot   Page   100fd
+ Create Delete Create Delete Latency Fault  Fault  selct
+ ------ ------ ------ ------ ------- ----- ------- -----
 EOF
 
 	for ($i = 0; $i <= $#uname; $i++) {
@@ -859,12 +793,11 @@ EOF
 				'lat_pagefault' )) <= 0) { 
 			next; 
 		}
-	        printf "%-9.9s %13.13s ", $host[$i], &getos($uname[$i]);
 		$c0k = $fs_create_0k[$i] <= 0 ? -1 : $M / $fs_create_0k[$i];
 		$c10k = $fs_create_10k[$i] <= 0 ? -1 : $M / $fs_create_10k[$i];
 		$d0k = $fs_delete_0k[$i] <= 0 ? -1 : $M / $fs_delete_0k[$i];
 		$d10k = $fs_delete_10k[$i] <= 0 ? -1 : $M / $fs_delete_10k[$i];
-		printf "%6.6s %6.6s %6.6s %6.6s %7.7s %5.5s %7.7s %5.5s\n",
+		printf " %6.6s %6.6s %6.6s %6.6s %7.7s %5.5s %7.7s %5.5s\n",
 			&scale_num($c0k, 6, $load[$i]),
 			&scale_num($d0k, 6, $load[$i]),
 			&scale_num($c10k, 6, $load[$i]),
@@ -889,11 +822,11 @@ sub print_bw_ipc_local
 	}
 	print<<EOF;
 
-*Local* Communication bandwidths in MB/s - bigger is better
------------------------------------------------------------------------------
-Host                OS  Pipe AF    TCP  File   Mmap  Bcopy  Bcopy  Mem   Mem
-                             UNIX      reread reread (libc) (hand) read write
---------- ------------- ---- ---- ---- ------ ------ ------ ------ ---- -----
+Local communication bandwidths in MB/s - bigger is better
+---------------------------------------------------------
+ Pipe AF    TCP  File   Mmap  Bcopy  Bcopy  Mem   Mem
+      UNIX      reread reread (libc) (hand) read write
+ ---- ---- ---- ------ ------ ------ ------ ---- -----
 EOF
 
 	for ($i = 0; $i <= $#uname; $i++) {
@@ -903,8 +836,7 @@ EOF
 				'bw_mem_rdsum' , 'bw_mem_wr' )) <= 0) { 
 			next; 
 		}
-	        printf "%-9.9s %13.13s ", $host[$i], &getos($uname[$i]);
-	        printf "%4.4s %4.4s %4.4s %6.6s %6.6s %6.6s %6.6s %4.4s %5.5s\n",
+	        printf " %4.4s %4.4s %4.4s %6.6s %6.6s %6.6s %6.6s %4.4s %5.5s\n",
 			&num($bw_pipe[$i], 4),
 			&num($bw_unix[$i], 4),
 			&num($bw_tcp_local[$i], 4),
@@ -929,24 +861,22 @@ sub print_mem
 
 Memory latencies in nanoseconds - smaller is better
     (WARNING - may not be correct, check graphs)
-------------------------------------------------------------------------------
-Host                 OS   Mhz   L1 \$   L2 \$    Main mem    Rand mem    Guesses
---------- -------------   ---   ----   ----    --------    --------    -------
+-----------------------------------------------------
+ L1 \$ L2 \$  Main mem  Rand mem  Guesses
+ ----  ----   --------  --------  -------
 EOF
 
 	for ($i = 0; $i <= $#uname; $i++) {
 		if (&resultsq($i, $i, ( 'lat_l1', 'lat_l2', 'lat_mem' )) <= 0) { 
 			next; 
 		}
-	        printf "%-9.9s %13.13s  %4d",
-		    $host[$i], &getos($uname[$i]), $misc_mhz[$i];
 		$msg = &check_caches;
 		if ($lat_l1[$i] < 0) {
 	        	printf "%6s %6s %11s    %s",
 			    "-", "-", "-",
 			    "Bad mhz?";
 		} else {
-			printf " %6.6s %6.6s %11.11s %11.11s",
+			printf " %4.4s  %4.4s  %8.8s  %8.8s",
 		            &num($lat_l1[$i], 6),
 		            &num($lat_l2[$i], 6),
 		            &num($lat_mem[$i], 8),

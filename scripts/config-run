@@ -654,92 +654,11 @@ if [ "X$OUTPUT" = X ]
 then	OUTPUT=/dev/tty;
 fi
 
-############################################################################
-# Submit results?
-############################################################################
-echo $L
-cat<<EOF;
-
-There is a database of benchmark results that is shipped with new
-releases of lmbench.  Your results can be included in the database
-if you wish.  The more results the better, especially if they include
-remote networking.  If your results are interesting, i.e., for a new
-fast box, they may be made available on the lmbench web page, which is
-
-	http://www.bitmover.com/lmbench
-
-EOF
-
-echo $ECHON "Mail results [default yes]: $ECHOC"
-read MAIL
-case $MAIL in 
-    [Nn]*)	MAIL=no
-		echo OK, no results mailed.
-		;;
-    *)		MAIL=yes
-		;;
-esac
-
 INFO=`../scripts/info`
-if [ $MAIL = yes ]
-then	if [ ! -f ../bin/$OS/$INFO ]
-	then	cp ../scripts/info-template ../bin/$OS/$INFO
-		chmod +w ../bin/$OS/$INFO
-		REUSE=no
-	else	
-		REUSE=view
-		while [ $REUSE = view ]
-		do	echo ""
-			echo $ECHON \
-"Reuse previous description [default yes, other options: no|view]: $ECHOC"
-			read REUSE
-			case $REUSE in 
-	    		[Nn]*)	REUSE=no
-				;;
-			[Vv]*)	REUSE=view
-				echo $L
-				more ../bin/$OS/$INFO
-				echo $L
-				;;
-	    		*)	REUSE=yes
-				;;
-			esac
-		done
-	fi
-
-	if [ $REUSE = no ]
-	then	EDITOR=vi
-		echo $L
-		cat<<EOF;
-
-Please tell us about your machine.   There is a form we would like you
-to fill out that we will make available with the results.  If you would
-prefer to use a different editor, tell us the editor at the prompt.
-
-If you want to skip filling out this form (please don't) then answer 
-"none" at the prompt.
-
-EOF
-		echo $ECHON "Editor [default $EDITOR]: $ECHOC"
-		read TMP
-		if [ X$TMP != X ]
-		then	EDITOR=$TMP
-		fi
-		if [ X$EDITOR != "none" ]
-		then	$EDITOR ../bin/$OS/`../scripts/info`
-		fi
-	fi
-fi
 
 echo $L
 echo ""
 echo "Confguration done, thanks."
-cat <<EOF
-
-There is a mailing list for discussing lmbench hosted at BitMover. 
-Send mail to majordomo@bitmover.com to join the list.
-
-EOF
 
 VERSION=`../scripts/version`
 
@@ -754,7 +673,6 @@ echo FSDIR=$FSDIR >> $C
 echo INFO=$INFO >> $C
 echo LINE_SIZE=$LINE_SIZE >> $C
 echo LOOP_O=$LOOP_O >> $C
-echo MAIL=$MAIL >> $C
 echo TOTAL_MEM=$TOTAL_MEM >> $C
 echo MB=$MB >> $C
 echo MHZ=\"$MHZ\" >> $C

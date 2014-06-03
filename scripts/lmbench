@@ -1,4 +1,5 @@
 #!/bin/sh
+set -x
 
 # lmbench - run the lmbench benchmark suite.
 #
@@ -138,7 +139,7 @@ do
 done
 
 STAT=$FSDIR/lmbench
-mkdir $FSDIR 2>/dev/null
+mkdir -p $FSDIR 2>/dev/null
 touch $STAT 2>/dev/null
 if [ ! -f $STAT ]
 then
