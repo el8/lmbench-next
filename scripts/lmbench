@@ -1,5 +1,4 @@
 #!/bin/sh
-set -x
 
 # lmbench - run the lmbench benchmark suite.
 #
@@ -124,6 +123,7 @@ echo \[PROCESSOR: `uname -p`] 1>&2
 echo \[MACHINE: `uname -m`] 1>&2
 echo \[RELEASE: `uname -r`] 1>&2
 echo \[VERSION: `uname -v`] 1>&2
+echo \[COMPILER: `cc --version | grep version`] 1>&2
 
 echo \[`date`] 1>&2
 echo \[`uptime`] 1>&2
@@ -160,10 +160,13 @@ then
 fi
 
 # To elevate to SCHED_RR we need to deal with cgroups
-CGROUPS=`grep '^cgroup' /proc/mounts`
-if [ -n "$CGROUPS" ]
+if [ X$REALTIME = XYES ]
 then
-	echo $$ > /sys/fs/cgroup/cpu/tasks
+	CGROUPS=`grep '^cgroup' /proc/mounts`
+	if [ -n "$CGROUPS" ]
+	then
+		echo $$ > /sys/fs/cgroup/cpu/tasks
+	fi
 fi
 
 #
