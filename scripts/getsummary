@@ -473,18 +473,18 @@ sub print_basic
 	}
 	print<<EOF;
 Basic system parameters
------------------------------------------------------------------------------------------
-Host            OS                   Description             Mhz  tlb   cache  mem   scal
-                                                                  pages line   par   load
-                                                                        bytes  
---------------- -------------------- ----------------------- ---- ----- ----- ------ ----
+---------------------------------------------------------------------------------------------------
+Host                 OS                        Description             Mhz  tlb   cache  mem   scal
+                                                                            pages line   par   load
+                                                                                  bytes  
+-------------------- ------------------------- ----------------------- ---- ----- ----- ------ ----
 EOF
 
 	for ($i = 0; $i <= $#uname; $i++) {
 		if (&resultsq($i, $i, ( 'tlb', 'line_size', 'mem_load_par' )) <= 0) {
 			next; 
 		}
-	        printf "%-15.15s %-20.20s %-23.23s ", 
+	        printf "%-20.20s %-25.25s %-23.23s ", 
 			$host[$i], &getos($uname[$i]), $file[$i];
 		printf "%4.4s %5.5s %5.5s %6.6s %4.4s\n",
 			&inum($misc_mhz[$i], 4),
