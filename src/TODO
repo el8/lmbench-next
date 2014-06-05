@@ -43,8 +43,6 @@ as offset/bandwidth.
 Make the disk stuff autosize such that you get the same number of data
 points regardless of disk size.
 
-Fix the getsummary to include simple calls.
-
 Think about the issues of int/long/long long/double/long double
 load/stores.  Maybe do them all.  This will (at least) require
 adding a test to scripts/build for the presence of long double
@@ -52,19 +50,13 @@ on this system.
 
 Make all results print out bandwidths in powers of 10/sizes in powers of two.
 
-Documentation on porting.
-
 Check that file size is right in the benchmarking system.
-
-Compiler version info included in results.  XXX - do this!
 
 memory store latency (complex)
 	Why can't I just use the read one and make it write?
 	Well, because the read one is list oriented and I need to figure
 	out reasonable math for the write case.  The read one is a load
 	per statement whereas the write one will be more work, I think.
-
-RPC numbers reserved for the benchmark.
 
 Check all the error outputs and make sure they are consistent.
 
@@ -102,4 +94,3 @@ mimics the hand made assembler for new machines.
 
 Think about a report format for the hardware stuff that showed the
 numbers as triples L1/L2/mem (or quadruples for alphas).
-
