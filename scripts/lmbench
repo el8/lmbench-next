@@ -144,7 +144,6 @@ touch $STAT 2>/dev/null
 if [ ! -f $STAT ]
 then
 	echo "Can't make a file - $STAT - in $FSDIR" >> ${OUTPUT}
-	touch $STAT
 	exit 1
 fi
 
