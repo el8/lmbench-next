@@ -7,8 +7,8 @@
 #
 
 # Get path to ourselve
-SCRIPT="`readlink -e $0`"
-SCRIPTPATH="`dirname $SCRIPT`"
+SCRIPT=$PWD
+SCRIPTPATH="`dirname $0`"
 
 # Make sure we can find lmbench-commands, df, netstat, ifconfig
 PATH=.:${SCRIPTPATH}:${PATH}:/sbin:/usr/sbin
