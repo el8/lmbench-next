@@ -7,4 +7,4 @@ SCRIPTPATH="`dirname $SCRIPT`"
 FILE="$SCRIPTPATH/../VERSION"
 MAJOR=`awk '/MAJOR/ {print $3}' $FILE`
 MINOR=`awk '/MINOR/ {print $3}' $FILE`
-echo $MAJOR.$MINOR
+echo "LMBENCH: $MAJOR.$MINOR"

@@ -88,7 +88,7 @@ fi
 # Figure out as much stuff as we can about this system.
 # Sure would be nice if everyone had SGI's "hinv".
 echo \[lmbench results for `uname -a`] 1>&2
-echo \[LMBENCH_VERSION: LMBENCH_VERSION_PLACEHOLDER] 1>&2
+echo \[LMBENCH_VERSION: `grep LMBENCH "$SCRIPTPATH"/version | cut -f 2 -d ":"`] 1>&2
 echo \[BENCHMARK_HARDWARE: ${BENCHMARK_HARDWARE}] 1>&2
 echo \[BENCHMARK_OS: ${BENCHMARK_OS}] 1>&2
 echo \[ALL: ${ALL}] 1>&2
@@ -123,7 +123,8 @@ echo \[PROCESSOR: `uname -p`] 1>&2
 echo \[MACHINE: `uname -m`] 1>&2
 echo \[RELEASE: `uname -r`] 1>&2
 echo \[VERSION: `uname -v`] 1>&2
-echo \[COMPILER: `cc --version | grep version`] 1>&2
+echo \[COMPILER: `grep COMPILER "$SCRIPTPATH"/version | cut -f 2 -d ":"`] 1>&2
+echo \[CFLAGS: `grep CFLAGS "$SCRIPTPATH"/version | cut -f 2 -d ":"`] 1>&2
 
 echo \[`date`] 1>&2
 echo \[`uptime`] 1>&2

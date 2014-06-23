@@ -17,7 +17,7 @@ CONFIG=../bin/$(OS)/`../scripts/config`
 UTILS=../scripts/target ../scripts/os ../scripts/gnu-os \
 	../scripts/info ../scripts/info-template ../scripts/version \
 	../scripts/config ../scripts/config-run ../scripts/results \
-	../scripts/lmbench ../scripts/build
+	../scripts/lmbench ../scripts/build ../scripts/compiler
 RESULTS=Results/$(OS)
 
 COMPILE=$(CROSS_COMPILE)$(CC) $(CFLAGS) $(LDFLAGS)
@@ -92,8 +92,11 @@ depend: ../scripts/depend
 .PHONY: lmbench install all install install-target dist get edit get-e clean share depend
 
 $O/lmbench : ../scripts/lmbench
-	rm -f $O/lmbench
-	VERSION=`../scripts/version`; sed -e "s/LMBENCH_VERSION_PLACEHOLDER/$${VERSION}/g" < ../scripts/lmbench > $O/lmbench
+	rm -f $O/lmbench $O/version
+	../scripts/version > $O/version
+	../scripts/compiler >> $O/version
+	echo "CFLAGS: $(COMPILE)" >> $O/version
+	cp ../scripts/lmbench $O/lmbench
 	chmod +x $O/lmbench
 
 $O/lmbench.a: $(LIBOBJS)
