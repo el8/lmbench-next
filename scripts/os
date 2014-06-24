@@ -1,18 +1,12 @@
 #!/bin/sh
 
-if [ "X$ARCH" = "X" ]
+MACHINE=`uname -m | sed -e 's/ //g' | sed -e 's?/?-?g'`
+SYSTEM=`uname -s | tr '[A-Z]' '[a-z]' | sed -e 's/ //g' | sed -e 's?/?-?g'`
+OS="${MACHINE}-${SYSTEM}"
+
+if [ X"$ARCH" != X ]
 then
-    OS=bloat-os
-    MACHINE=`uname -m | sed -e 's/ //g' | sed -e 's?/?-?g'`
-    SYSTEM=`uname -s | sed -e 's/ //g' | sed -e 's?/?-?g'`
-    OS="${MACHINE}-${SYSTEM}"
-    if [ -f ../scripts/gnu-os ]
-    then	OS=`../scripts/gnu-os | sed s/unknown-//`
-    fi
-    if [ -f ../../scripts/gnu-os ]
-    then	OS=`../../scripts/gnu-os | sed s/unknown-//`
-    fi
-else
-    OS=${ARCH}
+	OS="$ARCH"
 fi
+
 echo $OS
