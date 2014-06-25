@@ -21,12 +21,11 @@ lat_syscall - time simple entry into the operating system
 .TP
 null
 measures how long it takes to do 
-.IR getppid ().
+.IR getpid ().
 We chose
-.IR getppid ()
-because in all UNIX variants we are aware of, it requires a round-trip
-to/from kernel space and the actual work required inside the kernel is
-small and bounded.
+.IR getpid ()
+because it is the simplest system call and either requires a round-trip
+to/from kernel space or a vdso call.
 .TP
 read
 measures how long it takes to read one byte from \f(CB/dev/zero\fP.  
