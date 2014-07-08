@@ -111,7 +111,6 @@ echo \[MHZ: ${MHZ}] 1>&2
 echo \[MOTHERBOARD: ${MOTHERBOARD}] 1>&2
 echo \[NETWORKS: ${NETWORKS}] 1>&2
 echo \[PROCESSORS: ${PROCESSORS}] 1>&2
-echo \[SLOWFS: ${SLOWFS}] 1>&2
 echo \[OS: ${OS}] 1>&2
 echo \[LMBENCH_SCHED: $LMBENCH_SCHED] 1>&2
 echo \[REALTIME: $REALTIME] 1>&2
@@ -264,13 +263,10 @@ fi
 
 if [ X$BENCHMARK_FILE = XYES ]
 then
-	if [ X$SLOWFS != XYES ]
-	then
-		echo "Calculating file system latency" >> $OUTPUT
-		echo "File system latency" 1>&2
-		lat_fs -W $WARMUPS -N $REPETITIONS $FSDIR
-		echo "" 1>&2
-	fi
+	echo "Calculating file system latency" >> $OUTPUT
+	echo "File system latency" 1>&2
+	lat_fs -W $WARMUPS -N $REPETITIONS $FSDIR
+	echo "" 1>&2
 fi
 
 if [ X"$DISKS" != X ]
