@@ -13,6 +13,9 @@ opt:
 install:
 	@$(MAKE) -C src install
 
+doc:
+	@$(MAKE) -C doc install
+
 clean: 
 	@for i in doc src results; do ($(MAKE) -C $$i clean); done
 	@/bin/rm -rf bin/*
