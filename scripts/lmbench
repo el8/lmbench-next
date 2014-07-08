@@ -28,7 +28,12 @@ else
 	LINE_SIZE=256
 	WARMUPS=0
 	REPETITIONS=1
-	BENCHMARK_OS="YES"
+	BENCHMARK_ALL="YES"
+fi
+export ENOUGH TIMING_O LOOP_O LINE_SIZE LMBENCH_SCHED WARMUPS REPETITIONS REALTIME
+
+if [ X$BENCHMARK_ALL = XYES ]
+then
 	BENCHMARK_SYSCALL="YES"
 	BENCHMARK_OPS="YES"
 	BENCHMARK_SELECT="YES"
@@ -36,7 +41,6 @@ else
 	BENCHMARK_PIPE="YES"
 	BENCHMARK_UNIX="YES"
 	BENCHMARK_PROC="YES"
-	BENCHMARK_HARDWARE="YES"
 	BENCHMARK_PAGEFAULT="YES"
 	BENCHMARK_MMAP="YES"
 	BENCHMARK_FILE="YES"
@@ -47,7 +51,6 @@ else
 	BENCHMARK_CTX="YES"
 	BENCHMARK_MEM="YES"
 fi
-export ENOUGH TIMING_O LOOP_O LINE_SIZE LMBENCH_SCHED WARMUPS REPETITIONS REALTIME
 
 if [ X$FILE = X ]
 then
@@ -89,8 +92,6 @@ fi
 # Sure would be nice if everyone had SGI's "hinv".
 echo \[lmbench results for `uname -a`] 1>&2
 echo \[LMBENCH_VERSION: `grep LMBENCH "$SCRIPTPATH"/version | cut -f 2 -d ":"`] 1>&2
-echo \[BENCHMARK_HARDWARE: ${BENCHMARK_HARDWARE}] 1>&2
-echo \[BENCHMARK_OS: ${BENCHMARK_OS}] 1>&2
 echo \[ALL: ${ALL}] 1>&2
 echo \[WARMUPS: ${WARMUPS}] 1>&2
 echo \[REPETITIONS: ${REPETITIONS}] 1>&2
@@ -173,15 +174,15 @@ fi
 # B E N C H M A R K S
 #
 
-# didn't check for *every* option just for the echo...
-if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_SYSCALL = XYES ]
+# didn't check for *every* option just for this echo...
+if [ X$BENCHMARK_SYSCALL = XYES  ]
 then
 	echo "Calculating latency measurements" >> ${OUTPUT}
 	echo "" 1>&2
 	echo "Latency measurements" 1>&2
 fi
 
-if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_SYSCALL = XYES ]
+if [ X$BENCHMARK_SYSCALL = XYES ]
 then
 	lat_syscall -W $WARMUPS -N $REPETITIONS null
 	lat_syscall -W $WARMUPS -N $REPETITIONS read
@@ -191,7 +192,7 @@ then
 	lat_syscall -W $WARMUPS -N $REPETITIONS open $STAT
 fi
 
-if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_SELECT = XYES ]
+if [ X$BENCHMARK_SELECT = XYES ]
 then
 	for i in 10 100 250 500
 	do
@@ -203,24 +204,24 @@ then
 	done
 fi
 
-if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_SIG = XYES ]
+if [ X$BENCHMARK_SIG = XYES ]
 then
 	lat_sig -W $WARMUPS -N $REPETITIONS install
 	lat_sig -W $WARMUPS -N $REPETITIONS catch
 	lat_sig -W $WARMUPS -N $REPETITIONS prot $FILE
 fi
 
-if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_PIPE = XYES ]
+if [ X$BENCHMARK_PIPE = XYES ]
 then
 	lat_pipe -W $WARMUPS -N $REPETITIONS
 fi
 
-if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_UNIX = XYES ]
+if [ X$BENCHMARK_UNIX = XYES ]
 then
 	lat_unix -W $WARMUPS -N $REPETITIONS
 fi
 
-if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_PROC = XYES ]
+if [ X$BENCHMARK_PROC = XYES ]
 then
 	cp $SCRIPTPATH/hello /tmp/hello
 	for i in fork exec shell
@@ -230,7 +231,7 @@ then
 	rm -f /tmp/hello 
 fi
 
-if [ X$BENCHMARK_HARDWARE = XYES -o X$BENCHMARK_OPS = XYES ]
+if [ X$BENCHMARK_OPS = XYES ]
 then
 	lat_ops -W $WARMUPS -N $REPETITIONS
 	par_ops -W $WARMUPS -N $REPETITIONS
@@ -238,19 +239,19 @@ fi
 
 rm -f $FILE
 
-if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_FILE = XYES ]
+if [ X$BENCHMARK_FILE = XYES ]
 then
 	# choose one sample bandwidth from the middle of the pack
 	lmdd label="File $FILE write bandwidth: " of=$FILE move=${MB}m fsync=1 print=3
 	rm -f $FILE.*
 fi
 
-if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_PAGEFAULT = XYES ]
+if [ X$BENCHMARK_PAGEFAULT = XYES ]
 then
 	lat_pagefault -W $WARMUPS -N $REPETITIONS $FILE
 fi
 
-if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_MMAP = XYES ]
+if [ X$BENCHMARK_MMAP = XYES ]
 then
 	echo "" 1>&2
 	echo "mappings" 1>&2
@@ -261,7 +262,7 @@ then
 	echo "" 1>&2
 fi
 
-if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_FILE = XYES ]
+if [ X$BENCHMARK_FILE = XYES ]
 then
 	if [ X$SLOWFS != XYES ]
 	then
@@ -272,20 +273,17 @@ then
 	fi
 fi
 
-if [ X$BENCHMARK_HARDWARE = XYES ]
+if [ X"$DISKS" != X ]
 then
-	if [ X"$DISKS" != X ]
-	then
-		for i in $DISKS
-		do
-			if [ -r $i ]
-			then
-				echo "Calculating disk zone bw & seek times" >> ${OUTPUT}
-				disk $i
-				echo "" 1>&2
-			fi
-		done
-	fi
+	for i in $DISKS
+	do
+		if [ -r $i ]
+		then
+			echo "Calculating disk zone bw & seek times" >> ${OUTPUT}
+			disk $i
+			echo "" 1>&2
+		fi
+	done
 fi
 
 if [ X$BENCHMARK_TCP = XYES -o X$BENCHMARK_UDP = XYES -o X$BENCHMARK_CONNECT = XYES ]
@@ -300,25 +298,25 @@ then
 	done
 fi
 
-if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_UDP = XYES ]
+if [ X$BENCHMARK_UDP = XYES ]
 then
 	lat_udp -W $WARMUPS -N $REPETITIONS localhost
 	lat_udp -S localhost
 fi
 
-if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_TCP = XYES ]
+if [ X$BENCHMARK_TCP = XYES ]
 then
 	lat_tcp -W $WARMUPS -N $REPETITIONS localhost
 	lat_tcp -S localhost
 fi
 
-if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_CONNECT = XYES ]
+if [ X$BENCHMARK_CONNECT = XYES ]
 then
 	lat_connect -W $WARMUPS -N $REPETITIONS localhost
 	lat_connect -S localhost
 fi
 
-if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_TCP = XYES ]
+if [ X$BENCHMARK_TCP = XYES ]
 then
 	echo "" 1>&2
 	echo "Socket bandwidth using localhost" 1>&2
@@ -335,17 +333,17 @@ then
 	echo "Bandwidth measurements" 1>&2
 fi
 
-if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_UNIX = XYES ]
+if [ X$BENCHMARK_UNIX = XYES ]
 then
 	bw_unix -W $WARMUPS -N $REPETITIONS
 fi
 
-if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_PIPE = XYES ]
+if [ X$BENCHMARK_PIPE = XYES ]
 then
 	bw_pipe -W $WARMUPS -N $REPETITIONS
 fi
 
-if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_FILE = XYES ]
+if [ X$BENCHMARK_FILE = XYES ]
 then
 	echo "" 1>&2
 	echo "read bandwidth" 1>&2
@@ -363,7 +361,7 @@ then
 	echo "" 1>&2
 fi	
 
-if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_MMAP = XYES ]
+if [ X$BENCHMARK_MMAP = XYES ]
 then
 	echo "" 1>&2
 	echo "Mmap read bandwidth" 1>&2
@@ -382,7 +380,7 @@ then
 	rm -f $FILE
 fi
 
-if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_HARDWARE = XYES -o X$BENCHMARK_BCOPY = XYES ]
+if [ X$BENCHMARK_BCOPY = XYES ]
 then
 	echo "" 1>&2
 	echo "libc bcopy unaligned" 1>&2
@@ -456,7 +454,7 @@ then
 	echo "" 1>&2
 fi
 
-if [ X$BENCHMARK_OS = XYES -o X$BENCHMARK_CTX = XYES ]
+if [ X$BENCHMARK_CTX = XYES ]
 then
 	echo Calculating context switch overhead >> ${OUTPUT}
 	echo Context switch overhead 1>&2
@@ -476,7 +474,7 @@ then
 	echo "" 1>&2
 fi
 
-if [ X$BENCHMARK_HARDWARE = XYES -o X$BENCHMARK_MEM = XYES ]
+if [ X$BENCHMARK_MEM = XYES ]
 then
 	echo Calculating effective TLB size >> ${OUTPUT}
 	echo Effective TLB size 1>&2
