@@ -3,7 +3,12 @@
 # Configure parameters for lmbench.
 # %I% %E% %@%
 
-OS=`../scripts/os`
+# Get path to ourselve
+SCRIPT=$PWD
+SCRIPTPATH="`dirname $0`"
+
+OS=`${SCRIPTPATH}/os`
+
 L='====================================================================='
 echo $L; 
 cat<<EOF;
@@ -12,16 +17,12 @@ cat<<EOF;
 		----------------------------------------
 
 You need to configure some parameters to lmbench.  Once you have configured
-these parameters, you may do multiple runs by saying
+these parameters, you may do multiple runs by calling:
 
-	"make rerun"
-
-in the src subdirectory.
+	"lmbench [config file]"
 
 NOTICE: please do not have any other activity on the system if you can
-help it.  Things like the second hand on your xclock or X perfmeters
-are not so good when benchmarking.  In fact, X is not so good when
-benchmarking.
+help it. If possible stop any graphical UI  and background processes.
 
 EOF
 
@@ -30,38 +31,6 @@ if [ `echo -n "foo" | wc -l` -eq 0 ]
 then	ECHON="-n"; ECHOC=
 else	ECHON= ; ECHOC='\c'
 fi
-
-############################################################################
-# Multiple copies
-############################################################################
-echo $L
-cat<<EOF;
-
-If you are running on an MP machine and you want to try running
-multiple copies of lmbench in parallel, you can specify how many here.
-
-Using this option will make the benchmark run 100x slower (sorry).
-
-NOTE:  WARNING! This feature is experimental and many results are 
-	known to be incorrect or random!
-
-EOF
-AGAIN=Y
-while [ $AGAIN = Y ]
-do	echo $ECHON "MULTIPLE COPIES [default 1]: $ECHOC"
-	read SYNC_MAX
-	if [ "X$SYNC_MAX" != X ]
-	then	case "$SYNC_MAX" in
-		[0-9]|[0-9][0-9]|[0-9][0-9][0-9])
-			AGAIN=N
-			;;
-		*)	echo "Please enter a number between 1 and 999"
-			;;
-		esac
-	else	AGAIN=N
-		SYNC_MAX=1
-	fi
-done
 
 ############################################################################
 # Job placement (for SMPs)
@@ -247,17 +216,14 @@ to do a full run or one of the predefined OS or hardware subsets.
 
 EOF
 
-echo $ECHON "SUBSET (ALL|HARWARE|OS|DEVELOPMENT) [default all]: $ECHOC"
+echo $ECHON "SUBSET (ALL|DEVELOPMENT) [default all]: $ECHOC"
 read subset
 BENCHMARK_HARDWARE=NO
 BENCHMARK_OS=NO
 BENCHMARK_DEVELOPMENT=NO
 case "$subset" in
-	[hH]*)	BENCHMARK_HARDWARE=YES;;
-	[oO]*)	BENCHMARK_OS=YES;;
 	[dD]*)	BENCHMARK_DEVELOPMENT=YES;;
-	*)	BENCHMARK_HARDWARE=YES;
-		BENCHMARK_OS=YES;;
+	*)	BENCHMARK_ALL=YES;;
 esac
 
 if [ X$BENCHMARK_DEVELOPMENT = XYES ]; then
@@ -354,13 +320,6 @@ if [ X$BENCHMARK_DEVELOPMENT = XYES ]; then
 	    *)		BENCHMARK_CONNECT=YES;;
 	esac
 
-	echo $ECHON "RPC [default yes]: $ECHOC"
-	read bench
-	case "$bench" in
-	    [nN]*)	BENCHMARK_RPC=NO;;
-	    *)		BENCHMARK_RPC=YES;;
-	esac
-
 	echo $ECHON "BCOPY [default yes]: $ECHOC"
 	read bench
 	case "$bench" in
@@ -412,40 +371,10 @@ EOF
 fi
 
 ############################################################################
-# File system latency
+# Disk bandwidth/seek times
 ############################################################################
 echo $L
 cat<<EOF;
-
-This benchmark measures, by default, file system latency.  That can
-take a long time on systems with old style file systems (i.e., UFS,
-FFS, etc.).  Linux' ext2fs and Sun's tmpfs are fast enough that this
-test is not painful.
-
-If you are planning on sending in these results, please don't do a fast
-run.
-
-If you want to skip the file system latency tests, answer "yes" below.
-
-EOF
-
-echo $ECHON "SLOWFS [default no]: $ECHOC"
-read slow
-case "$slow" in
-    [yY]*) SLOWFS=YES;;
-    *)	   SLOWFS=NO;;
-esac
-
-############################################################################
-# Disk bandwidth/seek times
-############################################################################
-if [ $SYNC_MAX -gt 1 -o "${BENCHMARK_HARDWARE}" != "YES" ]; then
-	# parallel benchmarking is incompatible with disk tests
-	DISK_DESC=""
-	DISKS=""
-else
-	echo $L
-	cat<<EOF;
 
 This benchmark can measure disk zone bandwidths and seek times.  These can
 be turned into whizzy graphs that pretty much tell you everything you might
@@ -486,90 +415,6 @@ EOF
 			fi
 		done
 	fi
-fi
-
-############################################################################
-# Remote networking
-############################################################################
-if [ $SYNC_MAX -gt 1 ]; then
-	# remote networking is incompatible with parallel benchmarking
-	REMOTE=""
-else
-	echo $L
-
-	RSH=rsh
-	for p in `echo $PATH | sed 's/:/ /g'`
-	do	if [ -f $p/remsh ]
-		then	RSH=remsh
-		fi
-	done
-	RCP=rcp
-
-	cat<<EOF;
-
-If you are running on an idle network and there are other, identically
-configured systems, on the same wire (no gateway between you and them),
-and you have rsh access to them, then you should run the network part
-of the benchmarks to them.  Please specify any such systems as a space
-separated list such as: ether-host fddi-host hippi-host.
-
-EOF
-	echo $ECHON "REMOTE [default none]: $ECHOC"
-	read REMOTE
-
-	if [ "X$REMOTE" != X ]
-	then	cat<<EOF;
-
-Thanks for doing remote testing, that is a hard thing to get.  In 
-order to run a server on the remote system, we need a remote shell 
-to be enabled (ideally without a password) from this host to $REMOTE.  
-The original remote shell is rsh, but the use of a secure remote shell 
-like ssh is increasingly common.  We need the name of BOTH the shell 
-itself and the associated copy tool (e.g. rcp vs scp) to be entered.
-
-EOF
-		echo $ECHON "RSH [default $RSH]: $ECHOC"
-		read rsh
-		if [ -n "$rsh" ]
-		then	RSH=$rsh
-		fi
-		echo $ECHON "RCP [default $RCP]: $ECHOC"
-		read rcp
-		if [ -n "$rsh" ]
-		then	RCP=$rcp
-		fi
-
-		cat<<EOF;
-
-Could you do me one more favor and tell me the networking you think 
-will be used to get to each of the remote hosts.  By networking I 
-mean one of the following (or whatever you use if you use something 
-else):
-
-ethernet		aka 10baseT, thinnet, thicknet, etc
-ethernet-100		aka 100baseT, 100VG
-fddi			aka cddi
-hippi
-others?
-
-Please type it just like the above if you can, it makes parsing easier.
-
-EOF
-
-
-		for r in $REMOTE
-		do	echo $ECHON "Network type for $r: $ECHOC"
-			read n
-			X=`$RSH $r echo foo`
-			if [ X$X = Xfoo ]
-			then	echo Remote access to $r worked, thanks.
-			else	echo Remote access to $r did not work, please check and retry,
-				exit 1
-			fi
-			NETWORKS="${NETWORKS}[ $r:$n ]"
-		done
-	fi
-fi
 
 ############################################################################
 # Processor speed
@@ -596,12 +441,13 @@ EOF
 echo $ECHON "Processor mhz [default $MHZ]: $ECHOC"
 read mhz
 if [ -n "$mhz" ]
-then	MHZ=$mhz
+then
+	MHZ=$mhz
 fi
 
 
 ############################################################################
-# /usr/tmp?
+# /tmp?
 ############################################################################
 echo $L
 AGAIN=Y
@@ -610,7 +456,7 @@ do
 	cat<<EOF;
 
 We need a place to store a $MB Mbyte file as well as create and delete a
-large number of small files.  We default to /usr/tmp.  If /usr/tmp is a
+large number of small files.  We default to /tmp.  If /tmp is a
 memory resident file system (i.e., tmpfs), pick a different place.
 Please specify a directory that has enough space and is a local file
 system.
@@ -651,7 +497,8 @@ EOF
 echo $ECHON "Status output file [default /dev/tty]: $ECHOC"
 read OUTPUT
 if [ "X$OUTPUT" = X ]
-then	OUTPUT=/dev/tty;
+then
+	OUTPUT=/dev/tty;
 fi
 
 INFO=`../scripts/info`
@@ -660,9 +507,18 @@ echo $L
 echo ""
 echo "Confguration done, thanks."
 
-VERSION=`../scripts/version`
+VERSION=`${SCRIPTPATH}/version`
+C=${SCRIPTPATH}/../configs/$OS.config
 
-C=../bin/$OS/`../scripts/config`
+echo $L
+echo ""
+echo "Writing configuration file: $C"
+
+if [ -f $C ]
+then
+	`mv -f $C $C.old`	
+fi
+
 echo DISKS=\"$DISKS\" > $C
 echo DISK_DESC=\"$DISK_DESC\" >> $C
 echo OUTPUT=$OUTPUT >> $C
@@ -680,16 +536,10 @@ echo MOTHERBOARD=\"$MOTHERBOARD\" >> $C
 echo NETWORKS=\"$NETWORKS\" >> $C
 echo OS=\"$OS\" >> $C
 echo PROCESSORS=\"$PROCESSORS\" >> $C
-echo REMOTE=\"$REMOTE\" >> $C
-echo SLOWFS=\"$SLOWFS\" >> $C
-echo SYNC_MAX=\"$SYNC_MAX\" >> $C
 echo LMBENCH_SCHED=\"$LMBENCH_SCHED\" >> $C
 echo TIMING_O=$TIMING_O >> $C
-echo RSH=$RSH >> $C
-echo RCP=$RCP >> $C
 echo VERSION=$VERSION >> $C
-echo BENCHMARK_HARDWARE=$BENCHMARK_HARDWARE >> $C
-echo BENCHMARK_OS=$BENCHMARK_OS >> $C
+echo BENCHMARK_ALL=$BENCHMARK_ALL >> $C
 echo BENCHMARK_SYSCALL=$BENCHMARK_SYSCALL >> $C
 echo BENCHMARK_SELECT=$BENCHMARK_SELECT >> $C
 echo BENCHMARK_SIG=$BENCHMARK_SIG >> $C
@@ -703,7 +553,6 @@ echo BENCHMARK_UNIX=$BENCHMARK_UNIX >> $C
 echo BENCHMARK_UDP=$BENCHMARK_UDP >> $C
 echo BENCHMARK_TCP=$BENCHMARK_TCP >> $C
 echo BENCHMARK_CONNECT=$BENCHMARK_CONNECT >> $C
-echo BENCHMARK_RPC=$BENCHMARK_RPC >> $C
 echo BENCHMARK_BCOPY=$BENCHMARK_BCOPY >> $C
 echo BENCHMARK_MEM=$BENCHMARK_MEM >> $C
 echo BENCHMARK_OPS=$BENCHMARK_OPS >> $C
