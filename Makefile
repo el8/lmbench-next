@@ -17,11 +17,11 @@ doc:
 	@$(MAKE) -C doc install
 
 clean: 
-	@for i in doc src results; do ($(MAKE) -C $$i clean); done
+	@for i in doc src; do ($(MAKE) -C $$i clean); done
 	@/bin/rm -rf bin/*
 
 info: 
-	for i in doc src results scripts; do \
+	for i in doc src scripts; do \
 		echo ===== $$i =====; \
 		(cd $$i && info); \
 	done
