@@ -15,10 +15,10 @@ struct _state {
 };
 
 void
-do_getpid(iter_t iterations, void *cookie)
+do_getppid(iter_t iterations, void *cookie)
 {
 	while (iterations-- > 0) {
-		getpid();
+		getppid();
 	}
 }
 
@@ -132,7 +132,7 @@ main(int ac, char **av)
 		state.file = av[optind + 1];
 
 	if (!strcmp("null", av[optind])) {
-		benchmp(NULL, do_getpid, NULL, 0, parallel, 
+		benchmp(NULL, do_getppid, NULL, 0, parallel, 
 			warmup, repetitions, &state);
 		micro("Simple syscall", get_n());
 	} else if (!strcmp("write", av[optind])) {
