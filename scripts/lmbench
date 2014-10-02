@@ -186,7 +186,8 @@ fi
 
 if [ X$BENCHMARK_SYSCALL = XYES ]
 then
-	lat_syscall -W $WARMUPS -N $REPETITIONS null
+	lat_syscall -W $WARMUPS -N $REPETITIONS getppid		# former "null"
+	lat_syscall -W $WARMUPS -N $REPETITIONS gettimeofday
 	lat_syscall -W $WARMUPS -N $REPETITIONS read
 	lat_syscall -W $WARMUPS -N $REPETITIONS write
 	lat_syscall -W $WARMUPS -N $REPETITIONS stat $STAT
